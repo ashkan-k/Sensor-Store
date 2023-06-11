@@ -1,0 +1,389 @@
+{% load acl_tags %}
+
+<div class="sidebar" id="sidebar"  {% if request.user.is_superuser %}style="background-color: #226076 !important;"{% endif %}>
+    <div class="sidebar-inner slimscroll">
+        <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+
+                <li class="menu-title">پنل موسسه آموزشی ساعی</li>
+
+                <li class="">
+                    <a href="{% url 'dashboard' %}"><i class="fa fa-dashboard"></i> داشبورد</a>
+                </li>
+
+                <li class="">
+                    <a href="{% url 'profile' %}"><i class="fa fa-user"></i> پروفایل من</a>
+                </li>
+
+                {% if request.user.role_code in 'student,teacher' %}
+                    <li class="{% if request.resolver_match.url_name == 'dashboard' %} active {% endif %}">
+                        <a href="
+
+
+
+
+
+
+
+
+
+                                {% if request.user.role_code == 'student' %}{% url 'student-profile' %}{% else %}{% url 'teacher-profile' %}{% endif %}"><i
+                                class="fa fa-info"></i> اطلاعات تکمیلی</a>
+                    </li>
+                {% endif %}
+
+                {% if request.user.is_superuser %}
+                    <li class="menu-title">مدیریتی</li>
+
+                    {% if request.user|has_perm:'user_list,user_create,user_edit,user_delete,user_change_password' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-user" aria-hidden="true"></i> <span>کاربران</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                <li><a href="{% url 'users-list' %}">لیست کاربران</a></li>
+                                <li><a href="{% url 'users-create' %}">افزودن کاربر جدید</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-lock" aria-hidden="true"></i> <span>نقش و دسترسی</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'roles-list' %}">لیست نقش ها</a></li>
+                            <li><a href="{% url 'permissions-list' %}">لیست دسترسی ها</a></li>
+                            <li><a href="{% url 'role-user-list' %}">کاربران مدیریتی</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-users" aria-hidden="true"></i> <span>هنرجو ها</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'students-list' %}">لیست هنرجو ها</a></li>
+                            <li><a href="{% url 'students-create' %}">افزودن هنرجو جدید</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-user-plus" aria-hidden="true"></i> <span>مدرس ها</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'teachers-list' %}">لیست مدرس ها</a></li>
+                            <li><a href="{% url 'teachers-create' %}">افزودن مدرس جدید</a></li>
+                            <li><a href="{% url 'teacher-attendances-list' %}">حضور و غیاب مدرس ها</a></li>
+                            <li><a href="{% url 'teacher-payments-list' %}">پرداختی مدرس ها</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-image" aria-hidden="true"></i> <span>اسلایدر ها</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'sliders-list' %}">لیست اسلایدر ها</a></li>
+                            <li><a href="{% url 'sliders-create' %}">افزودن اسلایدر جدید</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-question-circle" aria-hidden="true"></i> <span>متون راهنما</span>
+                            <span
+                                    class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'helps-list' %}">لیست متون راهنما</a></li>
+                            <li><a href="{% url 'helps-create' %}">افزودن راهنما جدید</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+
+                {% if request.user|has_perm:'blog_category_list,blog_category_create,blog_category_edit,blog_category_delete,blog_list,blog_create,blog_edit,blog_delete' %}
+                    <li class="menu-title">وبلاگ</li>
+
+                    {% if request.user|has_perm:'blog_category_list,blog_category_create,blog_category_edit,blog_category_delete' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-list-alt" aria-hidden="true"></i>
+                                <span>دسته بندی مقاله ها</span>
+                                <span
+                                        class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                <li><a href="{% url 'blog-categories-list' %}">لیست دسته بندی ها</a></li>
+                                <li><a href="{% url 'blog-categories-create' %}">افزودن دسته بندی جدید</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if request.user|has_perm:'blog_list,blog_create,blog_edit,blog_delete,blog_comments_list,blog_comments_change_status,blog_comments_delete' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-newspaper-o" aria-hidden="true"></i> <span>مقاله ها</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                <li><a href="{% url 'blog-list' %}">لیست مقاله ها</a></li>
+                                <li><a href="{% url 'blog-create' %}">افزودن مقاله جدید</a></li>
+                                {% if request.user|has_perm:'blog_comments_list,blog_comments_change_status,blog_comments_delete' %}
+                                    <li><a href="{% url 'blog-comments-list' %}">لیست نطرات</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% endif %}
+
+                {% if request.user|has_perm:'class_list,class_create,class_edit,class_delete,class_detail,course_list,course_create,course_edit,course_delete,course_detail,course_change_status,course_user_list,course_user_create,course_user_edit,course_user_delete,course_user_change_status,classes_categories_list,classes_categories_create,classes_categories_edit,classes_categories_delete' %}
+                    <li class="menu-title">کلاس و دوره</li>
+
+                    {% if request.user|has_perm:'classes_categories_list,classes_categories_create,classes_categories_edit,classes_categories_delete' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-list" aria-hidden="true"></i> <span>دسته بندی کلاس ها</span>
+                                <span
+                                        class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                <li><a href="{% url 'classes-categories-list' %}">لیست دسته بندی کلاس</a></li>
+                                <li><a href="{% url 'classes-categories-create' %}">دسته بندی کلاس جدید</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if request.user|has_perm:'class_list,class_create,class_edit,class_delete,class_detail,class_user_list,class_user_create,class_user_edit,class_user_delete,class_user_change_status' %}
+
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-book" aria-hidden="true"></i> <span>دوره ها</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                {% if request.user|has_perm:'class_list' %}
+                                    {% if request.user.role_code == 'student' %}
+                                        <li><a href="{% url 'my-classes-list' %}">دوره های من</a></li>
+                                    {% endif %}
+                                    <li><a href="{% url 'classes-list' %}">لیست دوره ها</a></li>
+                                {% endif %}
+
+                                {% if request.user|has_perm:'class_create' %}
+                                    <li><a href="{% url 'classes-create' %}">افزودن دوره جدید</a></li>
+                                {% endif %}
+
+                                {% if request.user|has_perm:'class_user_list' %}
+                                    <li><a href="{% url 'class-users-list' %}">{% if request.user.is_staff %}لیست
+                                        کاربران دوره
+                                        ها{% else %}هنرجویان من{% endif %}</a></li>
+                                {% endif %}
+
+                                {% if request.user|has_perm:'class_daily_attendance_list' %}
+                                    <li><a href="{% url 'class-attendances-daily-list' %}">غایب های روز</a></li>
+                                {% endif %}
+
+                                {% if request.user|has_perm:'class_list' %}
+                                    <li><a href="{% url 'classes-list' %}?status=active">دوره های فعال</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+
+                    {% endif %}
+                {% endif %}
+
+                {% if request.user|has_perm:'report_card_list,report_card_create,report_card_edit,report_card_delete' %}
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-id-card" aria-hidden="true"></i> <span>کارنامه ها</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'report-card-list' %}">لیست کارنامه ها</a></li>
+                            <li><a href="{% url 'report-card-create' %}">کارنامه جدید</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+
+                {% if request.user|has_perm:'chats_list,chats_create,chats_edit,chats_delete' %}
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-comments" aria-hidden="true"></i> <span>گفتگو ها</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'chats-list' %}">لیست گفتگو ها</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+
+                {% if request.user|has_perm:'chats_list,chats_create,chats_edit,chats_delete' %}
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-hand-paper-o" aria-hidden="true"></i> <span>آزمون ها</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'quizzes-list' %}">لیست آزمون ها</a></li>
+                            <li><a href="{% url 'user-quizzes-list' %}">لیست پاسخنامه ها</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+
+                {% if request.user|has_perm:'poll_list,poll_create,poll_edit,poll_delete,poll_detail,poll_change_status' %}
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> <span>نظرسنجی</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            {% if request.user|has_perm:'poll_list' %}
+                                <li><a href="{% url 'polls-list' %}">نظرسنجی ها</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'user-polls-list' %}">پاسخ نظرسنجی ها</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+
+                {% if request.user|has_perm:'product_list,product_create,product_edit,product_delete,user_product_list,user_product_delete,product_user_list,product_user_detail,category_list,category_create,category_edit,category_delete' %}
+                    <li class="menu-title">فروشگاه</li>
+
+                    {% if request.user|has_perm:'category_list,category_create,category_edit,category_delete' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-product-hunt" aria-hidden="true"></i> <span>دسته بندی ها</span>
+                                <span class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                {% if request.user|has_perm:'category_list,category_create,category_edit,category_delete' %}
+                                    <li><a href="{% url 'categories-list' %}">لیست دسته بندی ها</a></li>
+                                {% endif %}
+
+                                {% if request.user|has_perm:'category_create' %}
+                                    <li><a href="{% url 'categories-create' %}">افزودن دسته بندی جدید</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if request.user|has_perm:'product_list,product_create,product_edit,product_delete,product_user_list,product_user_detail' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-product-hunt" aria-hidden="true"></i> <span>محصولات</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                {% if request.user|has_perm:'product_list,product_create,product_edit,product_delete' %}
+                                    <li><a href="{% url 'products-list' %}">لیست محصولات</a></li>
+                                {% endif %}
+
+                                {% if request.user|has_perm:'product_create' %}
+                                    <li><a href="{% url 'products-create' %}">افزودن محصولات جدید</a></li>
+                                {% endif %}
+
+                                {% if request.user.role_code in 'student,---' %}
+                                    <li><a href="{% url 'products-user-list' %}">محصولات</a></li>
+                                {% endif %}
+
+                                {% if request.user|has_perm:'user_product_list,user_product_delete' %}
+                                    <li><a href="{% url 'user-products-list' %}">محصولات فروخته شده</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% endif %}
+
+
+                {% if request.user|has_perm:'ticket_list,ticket_create,ticket_edit,ticket_delete,suggestion_list,suggestion_create,suggestion_edit,suggestion_delete,contact_us_list,contact_us_create,contact_us_edit,contact_us_delete' %}
+                    <li class="menu-title">پشتیبانی</li>
+
+                    {% if request.user|has_perm:'ticket_list,ticket_create,ticket_edit,ticket_delete' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-ticket" aria-hidden="true"></i> <span>تیکت ها</span>
+                                <span
+                                        class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                {% if request.user.is_staff %}
+                                    <li><a href="{% url 'ticket-categories-list' %}">لیست دسته بندی ها</a></li>
+                                {% endif %}
+
+                                {% if request.user|has_perm:'ticket_list,ticket_create,ticket_edit,ticket_delete' %}
+                                    <li><a href="{% url 'tickets-list' %}">لیست تیکت ها</a></li>
+                                {% endif %}
+
+                                {% if request.user|has_perm:'ticket_list' %}
+                                    <li><a href="{% url 'tickets-create' %}">افزودن تیکت جدید</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if request.user|has_perm:'suggestion_list,suggestion_create,suggestion_edit,suggestion_delete' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                <span>انتقادات و پیشنهادات</span> <span
+                                        class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                <li><a href="{% url 'suggestions-list' %}">انتقادات و پیشنهادات</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if request.user|has_perm:'contact_us_list,contact_us_create,contact_us_edit,contact_us_delete' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-address-book" aria-hidden="true"></i>
+                                <span>ارتباط باما</span> <span
+                                        class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                <li><a href="{% url 'contact_us-list' %}">لیست ارتباط باما</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                {% endif %}
+
+
+                {% if request.user|has_perm:'payments_list,installment_list,installment_create,installment_edit,installment_delete,installment_detail' %}
+                    <li class="menu-title">مالی</li>
+
+                    {% if request.user|has_perm:'payments_list' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-paypal" aria-hidden="true"></i> <span>تراکنش ها</span>
+                                <span
+                                        class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                <li><a href="{% url 'payments-list' %}">لیست تراکنش ها</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+
+                    {% if request.user|has_perm:'installment_list,installment_create,installment_edit,installment_delete,installment_detail' %}
+                        <li class="submenu">
+                            <a href="#"><i class="fa fa-book" aria-hidden="true"></i> <span>قسط شهریه ها</span>
+                                <span
+                                        class="menu-arrow"></span></a>
+                            <ul class="list-unstyled" style="display: none;">
+                                <li><a href="{% url 'installments-list' %}">لیست قسط شهریه ها</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                {% endif %}
+
+                {% if request.user|has_perm:'sms_send' %}
+                    <li class="menu-title">پیامک</li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-paper-plane" aria-hidden="true"></i> <span>پیامک</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            {#                            <li><a href="{% url 'settings-list' %}">لیست تنظیمات</a></li>#}
+                            <li><a href="{% url 'sms-group-send' %}">ارسال گروهی پیامک</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+
+
+                {% if request.user.is_superuser %}
+                    <li class="menu-title">عکس داشبورد</li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-image" aria-hidden="true"></i> <span>عکس داشبورد</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'images-list' %}">لیست عکس داشبورد</a></li>
+                            <li><a href="{% url 'images-create' %}">افزودن عکس داشبورد جدید</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="menu-title">تنظیمات</li>
+
+                    <li class="submenu">
+                        <a href="#"><i class="fa fa-cog" aria-hidden="true"></i> <span>تنظیمات</span> <span
+                                class="menu-arrow"></span></a>
+                        <ul class="list-unstyled" style="display: none;">
+                            <li><a href="{% url 'settings-list' %}">لیست تنظیمات</a></li>
+                            <li><a href="{% url 'settings-create' %}">افزودن تنظیمات جدید</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,184 @@
+{% extends 'Layouts/front-master.html' %}
+{% load static public_tags humanize %}
+
+{% block title %}ارتباط باما{% endblock %}
+
+{% block Styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'front/styles/contact.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'front/styles/contact_responsive.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <!-- Contact -->
+    {% if messages %}
+        {% for item in messages %}
+            <script>
+                Swal.fire({
+                    title: "تبریک ! 🥳",
+                    icon: 'success',
+                    text: '{{ item }}',
+                    type: "success",
+                    cancelButtonColor: 'var(--primary)',
+                    confirmButtonText: 'اوکی',
+                })
+            </script>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Home -->
+
+    <div class="home">
+        <!-- Background image artist https://unsplash.com/@thepootphotographer -->
+        <div class="home_background parallax_background parallax-window" data-parallax="scroll"
+             data-speed="0.8"><img src="{% static 'front/images/contact.jpg' %}" alt="picture"></div>
+        <div class="home_container">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="home_content text-center mt-5">
+                            <div class="home_title">ارتباط باما</div>
+                            <div class="breadcrumbs">
+                                <ul>
+                                    <li><a href="/">خانه</a></li>
+                                    <li>ارتباط باما</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact -->
+
+    <div class="contact">
+        <div class="container-fluid">
+            <div class="row row-xl-eq-height">
+                <!-- Contact Content -->
+                <div class="col-xl-6">
+                    <div class="contact_content">
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="contact_about">
+                                    <div class="logo_container">
+                                        <a href="#">
+                                            <div
+                                                    class="logo_content d-flex flex-row align-items-end justify-content-start">
+                                                <div class="logo_img"><img src="{% static 'front/images/logo.png' %}"
+                                                                           alt=""></div>
+                                                <div class="pb- pr-2" style="font-size: 18px; color: rgb(61, 60, 60);">
+                                                    ساعی
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="contact_about_text">
+                                        <p>{{ settings.contact_us | safe }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="contact_info_container">
+                                    <div class="contact_info_main_title">تماس باما</div>
+                                    <div class="contact_info">
+                                        <div class="contact_info_item">
+                                            <div class="contact_info_title">آدرس:</div>
+                                            <div class="contact_info_line">{{ settings.address | striptags | safe }}</div>
+                                        </div>
+                                        <div class="contact_info_item">
+                                            <div class="contact_info_title">تلفن:</div>
+                                            <div class="contact_info_line">{{ settings.tel | striptags | safe }}</div>
+                                        </div>
+                                        <div class="contact_info_item">
+                                            <div class="contact_info_title">ایمیل:</div>
+                                            <div class="contact_info_line">{{ settings.email | striptags | safe }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact_form_container">
+                            <form method="post" id="contact_form" class="contact_form">
+                                {% csrf_token %}
+                                <div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <input type="text" class="contact_input px-3"
+                                                   placeholder="{{ form.first_name.label }}"
+                                                   name="first_name"
+                                                   value="{{ form.first_name.value | default_if_none:'' }}"
+                                                   required="required">
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <input type="text" class="contact_input px-3"
+                                                   placeholder="{{ form.last_name.label }}"
+                                                   name="last_name"
+                                                   value="{{ form.last_name.value | default_if_none:'' }}"
+                                                   required="required">
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <input type="text" class="contact_input px-3"
+                                                   placeholder="{{ form.email.label }}"
+                                                   name="email"
+                                                   value="{{ form.email.value | default_if_none:'' }}"
+                                                   required="required">
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <input type="text" class="contact_input px-3"
+                                                   placeholder="{{ form.phone.label }}"
+                                                   name="phone"
+                                                   value="{{ form.phone.value | default_if_none:'' }}"
+                                                   required="required">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div><input type="text" class="contact_input px-3" placeholder="{{ form.title.label }}"
+                                            name="title"
+                                            value="{{ form.title.value | default_if_none:'' }}" required="required">
+                                </div>
+                                <div><textarea class="contact_input contact_textarea px-3"
+                                               name="text"
+                                               placeholder="{{ form.text.label }}">{{ form.text.value | default_if_none:'' }}</textarea>
+                                </div>
+                                <button type="submit" class="contact_button"><span>ثبت</span><span
+                                        class="button_arrow"><i class="fa fa-angle-right"
+                                                                aria-hidden="true"></i></span></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Map -->
+                <div class="col-xl-6 map_col">
+                    <div class="contact_map">
+
+                        <!-- Google Map -->
+                        <div id="google_map" class="google_map">
+                            <div class="map_container">
+                                <div id="map"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block Scripts %}
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCIwF204lFZg1y4kPSIhKaHEXMLYxxuMhA"></script>
+    <script src="{% static 'front/js/contact.js' %}"></script>
+
+    <script>
+        {% if messages %}
+            {% for item in messages %}
+                createToast('success', '{{ item }}');
+            {% endfor %}
+        {% endif %}
+    </script>
+{% endblock %}

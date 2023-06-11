@@ -1,0 +1,58 @@
+{% extends 'Layouts/auth-master.html' %}
+{% load public_tags static %}
+
+{% block title %}ثبت نام{% endblock %}
+
+{% block Styles %}
+    <link rel="stylesheet" href="{% static 'front/styles/signIn.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="cotainer">
+        <div class="log-in w-75 w-sm-50">
+            <h3>ثبت نام در سایت</h3>
+
+            {% if messages %}
+                {% for item in messages %}
+                    <p class="text-center justify-content-center"><small style="color:green; font-size: 18px" style="font-size: 14px"
+                              style="color:green">{{ item }}</small></p>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.non_field_errors %}
+                {% for item in form.non_field_errors %}
+                    <p class="text-center justify-content-center"><small style="color:red; font-size: 18px" style="font-size: 14px"
+                              style="color:red">{{ item|safe }}</small></p>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" id="frm">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class=" mx-5 d-flex justify-content-center d-sm-flex justify-content-end">
+                        <div class="adamak w-75 mb-5">
+                            <i class="fa fa-user py-2 px-3"></i>
+                            {{ field | addplaceholder:field.label | addclass:'user-input  w-100 px-4 py-2 mx-3' }}
+                            {% if field.errors %}
+                                <p class="text-danger"
+                                   style="margin-right: 20px!important;">{{ field.errors.0|escape }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <input type="button" onclick="$('#frm').submit()" value="ثبت نام در سایت"
+                       class="signin-button rounded-3">
+            </form>
+            <br>
+            <span class="signup-status"></span>
+            <div class="text mx-3 mx-lg-5 my-5">
+                <i class="fa fa-user-plus" style="color: #026688;"></i> <a
+                    href="{% url 'login' %}">ورود به سایت</a> <br>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

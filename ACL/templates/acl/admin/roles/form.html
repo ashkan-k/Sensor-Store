@@ -1,0 +1,155 @@
+{% extends 'Layouts/admin-master.html' %}
+{% load i18n public_tags acl_tags %}
+
+{% block title %} {% if object %}ویرایش نقش{% else %}افزودن نقش{% endif %} {% endblock %}
+
+{% block content %}
+
+    <div class="row" ng-init="init()">
+        <div class="col-xs-12">
+            <div class="col-lg-12">
+                <div class="card-box">
+                    <h2 class="card-title"><b>{% if object %}ویرایش نقش{% else %}افزودن نقش جدید{% endif %}</b></h2>
+
+                    <form class="form-horizontal"
+                          method="post" id="frm"
+                          enctype="multipart/form-data">
+
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                            {% if field.name != 'permissions' %}
+                                <div class="form-group">
+                                    <label class="control-label col-lg-2"
+                                           for="id_{{ field.name }}">{{ field.label }}:</label>
+
+                                    <div class="col-md-10">
+                                        {{ field|addclass:"form-control" }}
+
+                                        {% if field.help_text %}
+                                            <p><small style="font-size: 14px">{{ field.help_text|safe }} </small></p>
+                                        {% endif %}
+                                        {% if field.errors %}
+                                            <p><small class="text-danger" style="font-size: 14px"
+                                                      style="color:red">{{ field.errors.0|safe }}</small></p>
+                                        {% endif %}
+                                        {% if field.non_field_errors %}
+                                            <p><small class="text-danger" style="font-size: 20px"
+                                                      style="color:red">{{ field.non_field_errors.0|safe }}</small></p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <input type="hidden" name="permissions" id="id_permissions">
+                            {% endif %}
+                        {% endfor %}
+
+                        <hr/>
+                        <div class="row mt-5 container">
+                            <div class="col-md-12 mb-5">
+                                <h4>
+                                    <i class="fa fa-list"></i>
+                                    دسترسی‌های مورد نظر را از لیست زیر انتخاب کنید.
+                                </h4>
+                            </div>
+
+                            {% parse_permission form.permissions.value as permissions_list %}
+
+                            {% for item in permissions %}
+                                <div class="col-md-12"
+                                     style="margin-right: 200px !important; margin-top: 30px !important;">
+                                    <p class="font-weight-bold" ng-if="role.is_editable"> مدیریت
+                                        دسترسی‌های {{ item.title }}</p>
+                                    <p class="font-weight-bold" ng-if="!role.is_editable">
+                                        {{ item.title }}</p>
+                                    <div class="row">
+                                        {% for perm in item.permissions %}
+                                            {% get_permission_id perm.code as perm_id %}
+                                            <div class="col-md-4 m-t-5">
+                                                <label class="font-weight-light"
+                                                       for="id_permissions_{{ perm.code }}">{{ perm.name }}</label>
+                                                &nbsp;
+                                                <label class="custom-switch">
+                                                    <input type="checkbox" name="custom-switch-checkbox"
+                                                           id="id_permissions_{{ perm.code }}"
+                                                            {#                                                           ng-model="perms.{{ perm.name }}"#}
+                                                           {% if perm_id|check_perm_selected:permissions_list %}checked{% endif %}
+                                                           ng-click="permListChange('{{ perm_id }}')"
+                                                           class="custom-switch-input">
+                                                    {#                                                    <input type="checkbox" name="custom-switch-checkbox"#}
+                                                    {#                                                           ng-model="perms.{{ perm.name }}"#}
+                                                    {#                                                           class="custom-switch-input">#}
+                                                    <span class="custom-switch-indicator"></span>
+                                                </label>
+                                                <h6><small>{{ perm.description|default_if_none:'' }}</small>
+                                                </h6>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            {% if form.permissions.errors %}
+                                <p style="margin-right: 200px !important; margin-top: 30px !important;"><small class="text-danger" style="font-size: 14px"
+                                          style="color:red">{{ form.permissions.errors.0|safe }}</small></p>
+                            {% endif %}
+                        </div>
+
+
+                        <div class="col-lg-12">
+                            <div class="m-1-25 m-b-20" style="float: left !important;">
+                                <a href="{{ request.META.HTTP_REFERER }}"
+                                   class="btn btn-danger btn-border-radius waves-effect">
+                                    بازگشت
+                                </a>
+                                <button class="btn btn-info btn-border-radius waves-effect" ng-click="submit()"
+                                        type="button">ثبت
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block Scripts %}
+    <script>
+        app.controller('myCtrl', function ($scope, $http) {
+            $scope.permsList = [];
+            $scope.permissions = '';
+            $scope.perms = {};
+
+            $scope.init = function () {
+                {% if form.permissions.value %}
+                    {% parse_permission_str_list form.permissions.value as permissions_str_list %}
+                    $scope.permsList = '{{ permissions_str_list }}'.split(',');
+                {% endif %}
+            }
+
+            $scope.permListChange = function (permID) {
+                let index = $scope.permsList.indexOf(permID);
+                if (index > -1) {
+                    $scope.permsList.splice(index, 1);
+                } else {
+                    $scope.permsList.push(permID)
+                }
+
+                $scope.permissions = $scope.permsList.join();
+                $("#id_permissions").val($scope.permsList.join())
+                console.log($scope.permsList)
+            };
+
+            $scope.submit = function () {
+                $("#id_permissions").val($scope.permsList.join())
+                $('#frm').submit();
+            }
+        });
+    </script>
+    <script>
+        {#$("#id_permissions").select2();#}
+    </script>
+{% endblock %}

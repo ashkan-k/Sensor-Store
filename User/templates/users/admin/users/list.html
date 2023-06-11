@@ -1,0 +1,183 @@
+{% extends 'Layouts/admin-master.html' %}
+{% load static public_tags acl_tags %}
+
+{% block title %} لیست کاربران {% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        {% if messages %}
+            {% for item in messages %}
+                <script>
+                    Swal.fire({
+                        title: "تبریک ! 🥳",
+                        icon: 'success',
+                        text: '{{ item }}',
+                        type: "success",
+                        cancelButtonColor: 'var(--primary)',
+                        confirmButtonText: 'اوکی',
+                    })
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <div class="col-lg-12">
+            <div class="card-box">
+                <div class="card-block">
+                    <h4 class="card-title">لیست کاربران</h4>
+
+                    <hr>
+                    <form id="search">
+                        <div class="form-group">
+                            <div class="row">
+                                {% include 'Admin/Filters/search_input.html' %}
+                                {% include 'Admin/Filters/limit_select_box.html' %}
+                                {% include 'Admin/Filters/select_box.html' with label='نوع کاربری' name='type' items=types_filter_items %}
+                            </div>
+                        </div>
+                    </form>
+
+
+                    {% if user|has_perm:'user_create' %}
+                        <a class="btn btn-primary pull-right" href="{% url 'users-create' %}">افزودن کاربر جدید</a>
+                    {% endif %}
+                    {#                    <a class="btn btn-success pull-right m-l-10" href="{% url 'users-export-excel' %}" target="_blank">خروجی#}
+                    {#                        (Excel)</a>#}
+
+                    <span id="list">
+                                                                                                                    {% if object_list %}
+                                                                                                                        <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>نام</th>
+                        <th>نام خانوادگی</th>
+                        <th>شماره موبایل</th>
+                        <th>آواتار</th>
+                        <th>نقش کاربری</th>
+                        <th>تاریخ ثبت نام</th>
+                        <th>اعمال</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for item in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>{{ item.first_name | default:'---' }}</td>
+
+                            <td>{{ item.last_name | default:'---' }}</td>
+
+                            <td>{{ item.phone | default:'---' }}</td>
+
+                            <td>
+                                <img src="{{ item.get_avatar }}" alt="{{ item.phone }}" width="60">
+                            </td>
+
+                            <td>
+                            {% if item.is_superuser %}
+                                <span class="label label-success-border rounded">
+                                    مدیر
+                                </span>
+
+                            {% else %}
+                                {% if item.has_role %}
+                                    <a href="{% url 'role-user-update' item.role.id %}?user={{ item.id }}&next={% url 'users-list' %}">
+                                        <span class="label label-info-border rounded">
+                                         {{ item.role_code_display }}
+                                        </span>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'role-user-create' %}?user={{ item.id }}&next={% url 'users-list' %}">
+                                        <span class="label label-danger-border rounded">
+                                             کاربر
+                                        </span>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                            </td>
+
+                          <td>{{ item.created_at | jdate | default:'---' }}</td>
+
+                            <td>
+                                <div class="buttons ">
+                                    <form action="{% url 'users-delete' item.id %}"
+                                          id="delete_form_{{ item.id }}"
+                                          method="post">
+                                        {% csrf_token %}
+
+                                        {% if user|has_perm:'user_edit' %}
+                                            <a href="{% url 'users-update' item.id %}"
+                                               class="btn btn-primary btn-action mr-1"
+                                               data-toggle="tooltip" title=""
+                                               data-original-title="ویرایش"><i
+                                                    class="fas fa-pencil-alt"></i><i
+                                                    class="fa fa-pencil"> </i> </a>
+                                        {% endif %}
+
+                                        {% if user|has_perm:'user_delete' %}
+                                            <button type="button"
+                                                    data-original-title="حذف"
+                                                    data-toggle="tooltip"
+                                                    onclick="DeleteConfirm('{{ item.id }}')"
+                                                    class="delete_button btn btn-danger btn-action"><i
+                                                    class="fa fa-trash"> </i>
+                                             </button>
+                                        {% endif %}
+
+                                        <a href="{% url 'users-change-password' item.id %}"
+                                           class="btn btn-warning btn-action mr-1"
+                                           data-toggle="tooltip" title=""
+                                           data-original-title="تغییر رمز عبور"><i
+                                                class="fas fa-key-alt"></i><i
+                                                class="fa fa-key"> </i> </a>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                                                                                                                    {% else %}
+                                                                                                                        <h4 style="text-align: center; padding: 40px">
+                                موردی یافت نشد.
+                         </h4>
+                                                                                                                    {% endif %}
+
+
+                        {% include 'Admin/pagination.html' with page_obj=page_obj %}
+                    </span>
+
+                    {#                    {% include 'Admin/Users/partials/list.html' with page_obj=page_obj users=users %}#}
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block Scripts %}
+    <script>
+        function DeleteConfirm(id) {
+            Swal.fire({
+                title: "هشدار ! ",
+                icon: 'warning',
+                text: "آیا از حذف این آیتم اطمینان دارید؟",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#00aced',
+                cancelButtonColor: '#e6294b',
+                confirmButtonText: 'حذف',
+                cancelButtonText: 'انصراف'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#delete_form_' + id).submit();
+                }
+            })
+        }
+    </script>
+{% endblock %}

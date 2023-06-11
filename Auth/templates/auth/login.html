@@ -1,0 +1,77 @@
+{% extends 'Layouts/auth-master.html' %}
+{% load public_tags static %}
+
+{% block title %}ورود{% endblock %}
+
+{% block Styles %}
+    <link rel="stylesheet" href="{% static 'front/styles/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="cotainer">
+        <div class="log-in">
+            <h3>ورود به سایت</h3>
+
+            {% if messages %}
+                {% for item in messages %}
+                    <p class="text-center justify-content-center"><small style="color:green; font-size: 18px"
+                                                                         style="font-size: 14px"
+                                                                         style="color:green">{{ item }}</small></p>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.non_field_errors %}
+                {% for item in form.non_field_errors %}
+                    <p class="text-center justify-content-center"><small style="color:red; font-size: 18px"
+                                                                         style="font-size: 14px"
+                                                                         style="color:red">{{ item|safe }}</small></p>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" id="frm">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class=" mx-5 d-flex justify-content-center d-sm-flex justify-content-end">
+                        <div class="adamak w-75 mb-5">
+                            {% if field.name == 'password' %}
+                                <i class="fa fa-lock  py-2 px-3" style="font-size:20px"></i>
+                            {% else %}
+                                <i class="fa fa-user py-2 px-3"></i>
+                            {% endif %}
+
+                            {{ field | addplaceholder:field.label | addclass:'user-input  w-100 px-4 py-2 mx-3' }}
+                            {% if field.errors %}
+                                <p class="text-danger"
+                                   style="margin-right: 20px!important;">{{ field.errors.0|escape }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <div class="row mb-3 ml-5" style="margin-left: 100px!important;">
+                    <div class=" mx-5 d-flex justify-content-center d-sm-flex justify-content-end">
+                        <input type="checkbox" name="remember_me" id="id_remember_me"> <label for="id_remember_me">&nbsp;
+                        مرا بخاطر بسپار</label>
+                    </div>
+                </div>
+                <input type="button" onclick="$('#frm').submit()" value="ورود به سایت" class="signin-button rounded-3">
+            </form>
+
+            <br>
+
+            <span class="signin-status"></span>
+            <div class="text mx-3 mx-lg-5 my-5">
+                <i class="fa fa-user-plus" style="color: #026688;"></i> <a
+                    href="{% url 'register' %}">عضویت در سایت</a> <br>
+                <i class="fa fa-lock" style="color: #026688;"></i> <a href="{% url 'password-reset' %}">رمز عبور خود را
+                فراموش کرده
+                ام!</a>
+            </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}

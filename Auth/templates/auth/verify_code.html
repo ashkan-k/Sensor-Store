@@ -1,0 +1,81 @@
+{% extends 'Layouts/auth-master.html' %}
+{% load public_tags static %}
+
+{% block title %}تایید کد{% endblock %}
+
+{% block Styles %}
+    <link rel="stylesheet" href="{% static 'front/styles/login.css' %}">
+    <link rel="stylesheet" href="{% static 'front/styles/signIn.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="cotainer" ng-init="init()">
+        <div class="log-in w-75 w-sm-50">
+            <h3>تایید کد در سایت</h3>
+
+            {% if messages %}
+                {% for item in messages %}
+                    <p class="text-center justify-content-center"><small style="color:green; font-size: 18px"
+                                                                         style="font-size: 14px"
+                                                                         style="color:green">{{ item }}</small></p>
+                {% endfor %}
+            {% endif %}
+
+            {% if form.non_field_errors %}
+                {% for item in form.non_field_errors %}
+                    <p class="text-center justify-content-center"><small style="color:red; font-size: 18px"
+                                                                         style="font-size: 14px"
+                                                                         style="color:red">{{ item|safe }}</small></p>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" id="frm">
+                {% csrf_token %}
+
+                <input type="hidden" name="phone" value="{{ request.session.verify_phone }}">
+
+                {% for field in form.visible_fields %}
+                    <div class=" mx-5 d-flex justify-content-center d-sm-flex justify-content-end">
+                        <div class="adamak w-75 mb-5">
+                            <i class="fa fa-user py-2 px-3"></i>
+                            {{ field | addplaceholder:field.label | addclass:'user-input  w-100 px-4 py-2 mx-3' }}
+                            {% if field.errors %}
+                                <p class="text-danger"
+                                   style="margin-right: 20px!important;">{{ field.errors.0|escape }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <input type="button" onclick="$('#frm').submit()" value="تایید"
+                       class="signin-button rounded-3">
+                <input type="button" ng-click="SendNewCode()" value="ارسال مجدد"
+                       style="margin-bottom: 20px !important; background-color: #165757"
+                       class="signin-button rounded-3 mt-3">
+            </form>
+            <br>
+            <span class="signup-status"></span>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block Scripts %}
+    <script>
+        app.controller('myCtrl', function ($scope, $http) {
+            $scope.phone = null;
+
+            $scope.init = function () {
+                $scope.phone = '{{ request.session.verify_phone }}'
+            }
+
+            $scope.SendNewCode = function () {
+                $http.post(`/api/auth/code/send/`, {'phone': $scope.phone}).then(res => {
+                    createToast('success', res.data['message']);
+                }).catch(err => {
+                    parseError(err, 'خطایی رخ داد. لطفا دوباره امتحان کنید');
+                });
+            }
+        });
+    </script>
+{% endblock %}

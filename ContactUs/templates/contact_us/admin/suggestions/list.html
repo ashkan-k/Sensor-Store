@@ -1,0 +1,141 @@
+{% extends 'Layouts/admin-master.html' %}
+{% load static public_tags acl_tags %}
+
+{% block title %} لیست انتقادات و پیشنهادات ها {% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        {% if messages %}
+            {% for item in messages %}
+                <script>
+                    Swal.fire({
+                        title: "تبریک ! 🥳",
+                        icon: 'success',
+                        text: '{{ item }}',
+                        type: "success",
+                        cancelButtonColor: 'var(--primary)',
+                        confirmButtonText: 'اوکی',
+                    })
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <div class="col-lg-12">
+            <div class="card-box">
+                <div class="card-block">
+                    <h4 class="card-title">لیست انتقادات و پیشنهادات ها</h4>
+
+                                     <hr>
+                    <form id="search">
+                        <div class="form-group">
+                            <div class="row">
+                                {% include 'Admin/Filters/search_input.html' %}
+                                {% include 'Admin/Filters/limit_select_box.html' %}
+                            </div>
+                        </div>
+                    </form>
+
+
+                    {% if user|has_perm:'suggestion_create' %}
+                        <a class="btn btn-primary pull-right" href="{% url 'suggestions-create' %}">افزودن انتقادات و پیشنهادات جدید</a>
+
+                    {% endif %}
+
+
+
+                    <span id="list">
+                                                                                                {% if object_list %}
+                                                                                                    <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>عنوان</th>
+                        <th>متن</th>
+                        <th>کاربر</th>
+                        <th>اعمال</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for item in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>{{ item.title | default:'---' }}</td>
+
+                            <td title="{{ item.text }}">{{ item.text | truncatechars:50 | default:'---' }}</td>
+
+                            <td>{{ item.user | default:'---' }}</td>
+
+                            <td>
+                                <div class="buttons ">
+                                    <form action="{% url 'suggestions-delete' item.id %}"
+                                          id="delete_form_{{ item.id }}"
+                                          method="post">
+                                        {% csrf_token %}
+
+                                        {% if user|has_perm:'suggestion_edit' %}
+                                            <a href="{% url 'suggestions-update' item.id %}"
+                                               class="btn btn-primary btn-action mr-1"
+                                               data-toggle="tooltip" title=""
+                                               data-original-title="ویرایش"><i
+                                                    class="fas fa-pencil-alt"></i><i
+                                                    class="fa fa-pencil"> </i> </a>
+                                        {% endif %}
+
+                                        {% if user|has_perm:'suggestion_delete' %}
+                                            <button type="button"
+                                                    data-original-title="حذف"
+                                                    data-toggle="tooltip"
+                                                    onclick="DeleteConfirm('{{ item.id }}')"
+                                                    class="delete_button btn btn-danger btn-action"><i
+                                                    class="fa fa-trash"> </i>
+                                        </button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                                                                                                {% else %}
+                                                                                                    <h4 style="text-align: center; padding: 40px">
+                                موردی یافت نشد.
+                         </h4>
+                                                                                                {% endif %}
+
+
+                        {% include 'Admin/pagination.html' with page_obj=page_obj %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block Scripts %}
+    <script>
+        function DeleteConfirm(id) {
+            Swal.fire({
+                title: "هشدار ! ",
+                icon: 'warning',
+                text: "آیا از حذف این آیتم اطمینان دارید؟",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#00aced',
+                cancelButtonColor: '#e6294b',
+                confirmButtonText: 'حذف',
+                cancelButtonText: 'انصراف'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#delete_form_' + id).submit();
+                }
+            })
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% if page_obj.has_other_pages %}
+    <!-- Pagination -->
+    <div class="container row">
+        <div class="col">
+            <div class="news_pagination courses_paginations d-flex justify-content-center">
+                <ul class="bg-light w-75 border-bottom text-center py-1 rounded-3">
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in page_obj.paginator.page_range %}
+                        {% if page_obj.number == i %}
+                            <li class="active"><a>{{ i }}</a></li>
+                        {% else %}
+                            <li><a href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% block Styles %}
+    <style>
+        .pagination_color li {
+            color: #00aced;
+            cursor: pointer !important;
+        }
+
+        .pagination_color li a {
+            color: #00aced;
+        }
+
+    </style>
+{% endblock %}
