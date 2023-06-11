@@ -77,6 +77,8 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'admin_honeypot',
     'django_filters',
+    'crispy_forms',
+    'crispy_bootstrap4',
     'rest_framework_simplejwt',
 ]
 
@@ -330,6 +332,9 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Tehran'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 if not DEBUG:
     PREPEND_WWW = True
