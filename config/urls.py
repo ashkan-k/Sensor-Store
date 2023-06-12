@@ -19,6 +19,7 @@ urlpatterns = [
     path('', include('Call_Price.urls')),
     path('', include('ContactUs.urls')),
     path('', include('Cart.urls')),
+    path('', include('User.urls')),
 
     ## Auth ##
     path('', include('Auth.urls')),

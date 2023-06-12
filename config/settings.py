@@ -63,7 +63,8 @@ INSTALLED_APPS = [
     'utils',
     'Sms',
     'Admin',
-
+    'extenstions',
+    
     ## AccountPanel ##
     'AccountPanel',
 

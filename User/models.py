@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django_jalali.db import models as jmodels
 from ACL.permissions import PERMISSIONS
+from extenstions.utils import jalali_converter
 from utils.validator import mobile_regex, mobile_validator, national_id_regex
 from .helpers import MARITAL_STATUS_CHOICES, EDUCATION_LEVEL_CHOICES, INTRO_METHOD
 from .managers import UserManager
@@ -153,6 +154,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if permission in self.permissions:
             return True
         return False
+    
+    def jcreated(self):
+        return jalali_converter(self.created_at)
 
     def get_avatar(self):
         return self.avatar.url if self.avatar else '/static/admin_panel/assets/img/user_avatr.png'

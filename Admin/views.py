@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 from ACL.mixins import VerifiedUserMixin
 from Payment.models import Payment
 from Category.models import Category
+from User.models import User
 
 User = get_user_model()
 
@@ -21,6 +22,7 @@ class Dashboard(VerifiedUserMixin, TemplateView):
                     'total_amount'],
             'users_count': User.objects.count(),
             'categories': Category.objects.filter().order_by('-id')[:5],
+            'users': User.objects.filter().order_by('-id')[:5],
         }
 
         return context
