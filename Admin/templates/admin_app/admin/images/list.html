@@ -1,0 +1,116 @@
+{% extends 'Layouts/admin-master.html' %}
+{% load static public_tags acl_tags %}
+{% load humanize %}
+
+{% block title %} لیست عکس داشبورد ها {% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        {% if messages %}
+            {% for item in messages %}
+                <script>
+                    Swal.fire({
+                        title: "تبریک ! 🥳",
+                        icon: 'success',
+                        text: '{{ item }}',
+                        type: "success",
+                        cancelButtonColor: 'var(--primary)',
+                        confirmButtonText: 'اوکی',
+                    })
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <div class="col-lg-12">
+            <div class="card-box">
+                <div class="card-block">
+                    <h4 class="card-title">لیست عکس داشبورد ها</h4>
+
+                    <hr>
+
+                        <a class="btn btn-primary pull-right" href="{% url 'images-create' %}">افزودن عکس داشبورد جدید</a>
+
+                    <span id="list">
+                                                                      {% if object_list %}
+                                                                          <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>لینک</th>
+                        <th>اعمال</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for item in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>{{ item.link | default:'---' | truncatechars:80 }}</td>
+
+                            <td>
+                                <div class="buttons ">
+                                    <form action="{% url 'images-delete' item.id %}"
+                                          id="delete_form_{{ item.id }}"
+                                          method="post">
+                                        {% csrf_token %}
+
+                                            <a href="{% url 'images-update' item.id %}"
+                                               class="btn btn-primary btn-action mr-1"
+                                               data-toggle="tooltip" title=""
+                                               data-original-title="ویرایش"><i
+                                                    class="fas fa-pencil-alt"></i><i
+                                                    class="fa fa-pencil"> </i> </a>
+                                            <button type="button"
+                                                    data-original-title="حذف"
+                                                    data-toggle="tooltip"
+                                                    onclick="DeleteConfirm('{{ item.id }}')"
+                                                    class="delete_button btn btn-danger btn-action"><i
+                                                    class="fa fa-trash"> </i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                                                                      {% else %}
+                                                                          <h4 style="text-align: center; padding: 40px">
+                                موردی یافت نشد.
+                         </h4>
+                                                                      {% endif %}
+
+
+                        {% include 'Admin/pagination.html' with page_obj=page_obj %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block Scripts %}
+    <script>
+        function DeleteConfirm(id) {
+            Swal.fire({
+                title: "هشدار ! ",
+                icon: 'warning',
+                text: "آیا از حذف این آیتم اطمینان دارید؟",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#00aced',
+                cancelButtonColor: '#e6294b',
+                confirmButtonText: 'حذف',
+                cancelButtonText: 'انصراف'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#delete_form_' + id).submit();
+                }
+            })
+        }
+    </script>
+{% endblock %}

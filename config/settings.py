@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'Call_Price',
     'utils',
     'Sms',
+    'Admin',
 
     ## AccountPanel ##
     'AccountPanel',

@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('admin_honypot/', include('admin_honeypot.urls', namespace='admin_honeypot')),
 
+    path('', include('Admin.urls')),
     path('', include('ACL.urls')),
     path('', include('Category.urls')),
     path('', include('Sms.urls')),
