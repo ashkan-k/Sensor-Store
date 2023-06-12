@@ -3,6 +3,7 @@ from .views import *
 
 urlpatterns = [
     path('dashboard/callprices/', CallPriceListView.as_view(), name='callprices-list'),
+    path('dashboard/callprices/<int:o_id>/', CallPriceDetailView.as_view(), name='callprices-detail'),
     path('dashboard/callprices/create/', CallPriceCreateView.as_view(), name='callprices-create'),
     path('dashboard/callprices/update/<int:pk>/', CallPriceUpdateView.as_view(), name='callprices-update'),
     path('dashboard/callprices/delete/<int:pk>/', CallPriceDeleteView.as_view(), name='callprices-delete'),

@@ -1,0 +1,96 @@
+{% extends "Layouts/admin-master.html" %} {% block Content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">استعلام قیمت ها</h1>
+        </div>
+        <!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-left">
+            <li class="breadcrumb-item"><a href="#">خانه</a></li>
+            <li class="breadcrumb-item active">استعلام قیمت ها</li>
+          </ol>
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+
+  <!-- Main content -->
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- <div class="callout callout-info">
+            <h5><i class="fa fa-info"></i> نکته :</h5>
+            این صفحه مناسب برای پرینت طراحی شده است برای تست روی دکمه پرینت کلیک کنید
+          </div> -->
+
+
+          <!-- Main content -->
+          <div class="invoice p-3 mb-3">
+            <!-- title row -->
+            <div class="row">
+              <div class="col-12">
+                <h4>
+                  <i class="fa fa-globe"></i> استعلام قیمت
+                  <small class="float-left">تاریخ: {{callprices.created_at}}</small>
+                </h4>
+              </div>
+              <!-- /.col -->
+            </div>
+            <!-- info row -->
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-12 table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                    <th>شناسه</th>
+                    <th>نام محصول</th>
+                    <th>دسته بندی</th>
+                    <th>قیمت</th>
+                    <th>شماره تلفن</th>
+                    <th>نام و نام خانوادگی</th>
+                    <th>نام شرکت</th>
+                    <th>وضعیت</th>
+                    </tr>
+                    </thead>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                          <td>{{callprices.id}}</td>
+                          <td>{{callprices.product}}</td>
+                          <td>{{callprices.category}}</td>
+                          <td>{{callprices.price}}</td>
+                          <td>{{callprices.phone_number}}</td>
+                          <td>{{callprices.full_name}}</td>
+                          <td>{{callprices.company_name}}</td>
+                          <td>{{callprices.status}}</td>
+                        </tr>
+                    </tbody>
+                    
+                  </table>
+                </div>
+                <!-- /.col -->
+              </div>
+          </div>
+          <!-- /.invoice -->
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- /.content -->
+</div>
+
+{% endblock %}

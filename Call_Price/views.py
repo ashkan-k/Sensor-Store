@@ -1,8 +1,9 @@
 # from Subscription.models import Type
 from django.conf import settings
 from django.contrib import messages
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from ACL.mixins import SuperUserRequiredMixin, VerifiedUserMixin
 from .filters import CallPriceFilters
@@ -35,6 +36,19 @@ class CallPriceUpdateView(SuperUserRequiredMixin, UpdateView):
     model = CallPrice
     form_class = CallPriceForm
     success_url = reverse_lazy("callprices-list")
+
+
+class CallPriceDetailView(SuperUserRequiredMixin,DetailView):
+    model = CallPrice
+
+    def setup(self, request, *args, **kwargs):
+        self.callprices_instance = get_object_or_404(CallPrice, pk=kwargs['o_id'])
+        return super().setup(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        callprices = CallPrice.objects.all()
+        return render(request, "callprices/admin/callprices/detail.html",
+                      {'callprices': self.callprices_instance})
 
 
 class CallPriceDeleteView(SuperUserRequiredMixin, DeleteView):

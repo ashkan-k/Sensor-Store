@@ -81,14 +81,13 @@
                           ویرایش</a
                         ></span
                       >
-                      
                       <form
                         method="post"
                         action="{% url 'categories-delete' item.id %}"
                       >
                         {% csrf_token %}
-                        <input type="submit"  class="btn btn-danger m-1"
-                          >حذف</
+                        <input type="submit" value="حذف"  class="btn btn-danger m-1"
+                          ></
                         >
                       </form>
                       <!-- <span class="badge bg-danger"><a href="{% url 'categories-delete' item.id %}"> حذف</a></span> -->

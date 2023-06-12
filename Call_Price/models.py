@@ -17,10 +17,13 @@ class CallPrice(CustomModel):
     company_name = models.CharField(
         max_length=100, null=True, verbose_name="نام سازمان | شرکت")
     status = models.BooleanField(verbose_name='وضعیت تایید', default=False)
+    created_at = models.DateTimeField(verbose_name='تاریخ ثبت', auto_now_add=True)
 
+    
     def __str__(self):
         return f"{self.full_name} | {self.phone_number} | {self.product} | {self.created_at}"
 
     class Meta:
         verbose_name = "استعلام قیمت"
         verbose_name_plural = "استعلام قیمت ها"
+        
