@@ -71,7 +71,7 @@
                     <td>{{ item.id }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.slug }}</td>
-                    <td>{{ item.parent }}</td>
+                    <td>{{ item.parent | default:"-----" }}</td>
                     <td>
                       <span type="submit" class="btn btn-info m-1"
                         ><a
