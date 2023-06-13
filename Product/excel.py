@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import transaction
 from unidecode import unidecode
-from Product.models import Product, Color
+from Product.models import Product, Color, Size
 
 
 class Reader:
@@ -44,7 +44,6 @@ class Reader:
                 row_error = ''
                 try:
                     row_fields = sheet.row_values(row)
-                    username = self.fetch_row_field(row_fields, 10000)  # Optional
 
                     # required fields
                     title = self.fetch_row_field(row_fields, 0)
@@ -68,15 +67,14 @@ class Reader:
                         row_error = 'فروشنده محصول اجباری است.'
 
                     tags = self.fetch_row_field(row_fields, 6)
-                    price = self.fetch_row_field(row_fields, 7)
-                    count = self.fetch_row_field(row_fields, 8)
-                    suggestion_count = self.fetch_row_field(row_fields, 9)
-                    status = self.fetch_row_field(row_fields, 10)
+                    count = self.fetch_row_field(row_fields, 7)
+                    suggestion_count = self.fetch_row_field(row_fields, 8)
+                    status = self.fetch_row_field(row_fields, 8)
                     if status not in [1, 0]:
                         row_error = 'وضعیت تایید محصول باید یکی از دو گزینه 0(غیر فعال)، 1(فعال) باشد.'
 
                     colors = []
-                    colors_id = self.fetch_row_field(row_fields, 11)
+                    colors_id = self.fetch_row_field(row_fields, 10)
                     if colors_id:
                         colors_id = colors_id.split(',')
                         try:
@@ -97,7 +95,7 @@ class Reader:
                         try:
                             for item in sizes_id:
                                 item = int(item)
-                                new_size = Color.objects.filter(id=item).first()
+                                new_size = Size.objects.filter(id=item).first()
                                 if not new_size:
                                     row_error = 'سایزی با این کد یافت نشد.'
                                 else:
@@ -115,26 +113,19 @@ class Reader:
 
                 try:
                     result['data'].append({
-                        'user': {
-                            'username': username,
-                            'first_name': first_name,
-                            'last_name': last_name,
-                            'email': email,
-                            'mobile': mobile,
-                            'password': password,
-                            'national_id': national_id,
-                            # 'personnel_code': personnel_code,
-                            'birth_date': birth_date,
-                            # 'address': address,
-                            # 'type': user_type,
-                            'gender': gender,
-                            # 'father_name': father_name,
-                            # 'work_place': work_place,
-                            # 'work_position': work_position,
-                            # 'identity_number': identity_number,
+                        'product_data': {
+                            'title': title,
+                            'text': text,
+                            'price': price,
+                            'user_id': user_id,
+                            'category_id': category_id,
+                            'tags': tags,
+                            'count': count,
+                            'suggestion_count': suggestion_count,
+                            'status': status,
                         },
-                        'group': group,
-                        # 'company': company,
+                        'colors': colors,
+                        'sizes': sizes,
                     })
                 except:
                     # Try except i guess is not needed, just added for being more sure
@@ -155,76 +146,19 @@ class Reader:
                 try:
                     row_error = ''
                     item = result['data'][index]
-                    user_data = item.get('user')
+                    product_data = item.get('product_data')
 
-                    username = user_data.pop('username')
-                    mobile = user_data.pop('mobile')
-                    national_id = user_data.pop('national_id')
-                    # identity_number = user_data.pop('identity_number')
-                    # father_name = user_data.pop('father_name')
+                    colors = item.pop('colors')
+                    sizes = item.pop('sizes')
 
-                    # work_place = user_data.pop('work_place')
-                    # work_position = user_data.pop('work_position')
-                    # personnel_code = user_data.pop('personnel_code')
-                    # company = item.pop('company')
-                    group = item.pop('group')
+                    product = Product.objects.create(**product_data)
 
-                    if username:
-                        qs = User.objects.filter(username=username)
-                    if mobile and not qs:
-                        qs = User.objects.filter(mobile=mobile)
-                    # if national_id and not qs:
-                    #     qs = User.objects.filter(national_id=national_id)
+                    result['products'].append([product, 'محصول ایجاد شد.'])
 
-                    count = qs.count()
-                    if count > 1:
-                        row_error = '{} کاربر دیگر با این شماره موبایل یا کد ملی قبلا تعریف شده است.'.format(count - 1)
-                    else:
-                        user = qs.first()
-                        if user:
-                            if not self.override_values:
-                                # در این حالت نباید مقادیر کاربر به روز رسانی شوند.
-                                continue
-                            for key, value in user_data.items():
-                                if not value:
-                                    # فقط متغیرهایی که مقدار داشته باشند به روز رسانی می‌شوند.
-                                    continue
-                                if key == 'password':
-                                    user.set_password(value)
-                                else:
-                                    setattr(user, key, value)
-                            user.save()
-
-                            if group:
-                                user.add_groups(group)
-                            result['products'].append([user, 'اطلاعات کاربر به روز رسانی شد.'])
-                        else:
-                            user = User.objects.create_user(
-                                mobile=mobile,
-                                username=username,
-                                national_id=national_id,
-                                # father_name=father_name,
-                                # identity_number=identity_number,
-                                **user_data
-                            )
-
-                            result['products'].append([user, 'کاربر ایجاد شد.'])
-
-                        # if personnel_code:
-                        #     user.profile.personnel_code = personnel_code
-                        # if work_position:
-                        #     user.profile.work_position = work_position
-                        # if work_place:
-                        #     user.profile.work_place = work_place
-                        # user.profile.save()
-
-                        if group:
-                            user.add_groups(group)
-
-                        if self.company:
-                            user.set_company(self.company)
-                            print('bbbbbbbbbbbbbbbbbbbbbbbbbb')
-                            print(user.company)
+                    if colors:
+                        product.colors.add(colors)
+                    if sizes:
+                        product.sizes.add(sizes)
 
                     if row_error:
                         result['status'] = False
