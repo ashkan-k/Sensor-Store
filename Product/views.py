@@ -1,11 +1,12 @@
 # from Subscription.models import Type
 from django.conf import settings
 from django.contrib import messages
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, FormView
 
 from ACL.mixins import SuperUserRequiredMixin
-from .forms import ProductForm
+from .forms import ProductForm, ExcelImportForm
 from .models import Product
 
 
@@ -38,6 +39,22 @@ class ProductDeleteView(SuperUserRequiredMixin, DeleteView):
         resp = super().dispatch(*args, **kwargs)
         messages.success(self.request, 'آیتم مورد نظر با موفقیت حدف شد.')
         return resp
+
+
+class ProductImportView(SuperUserRequiredMixin, FormView):
+    form_class = ExcelImportForm
+    template_name = "products/admin/excel.html"
+
+    def form_valid(self, form):
+        override_values = form.cleaned_data.get('override_values', False)
+        ignore_errors = form.cleaned_data.get('ignore_errors', False)
+        company = form.cleaned_data.get('company', None)
+
+        reader = Reader(override_values=override_values, ignore_errors=ignore_errors, company=company)
+        file_content = form.cleaned_data.get('file').read()
+        result = reader.read(file_content)
+        form = self.form_class
+        return render(self.request, self.template_name, locals())
 
 # ======================================================================
 
