@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import transaction
 from unidecode import unidecode
-from Product.models import Product
+from Product.models import Product, Color
 
 
 class Reader:
@@ -31,14 +31,6 @@ class Reader:
             'status': True
         }
 
-        if not self.company:
-            print('vvvvvvvvvvvvvvvvvvvvvvvvvv')
-            result['msg'] = "لطفا شرکت را انتخاب کنید."
-            result['status'] = False
-            return result
-
-        print(self.company)
-
         try:
             workbook = xlrd.open_workbook(file_contents=file_content)
         except:
@@ -54,83 +46,65 @@ class Reader:
                     row_fields = sheet.row_values(row)
                     username = self.fetch_row_field(row_fields, 10000)  # Optional
 
-                    # one of first_name or last_name is required
-                    first_name = self.fetch_row_field(row_fields, 0)
-                    last_name = self.fetch_row_field(row_fields, 1)
-                    if not first_name and not last_name:
-                        row_error = 'حداقل یکی از فیلدهای نام یا نام خانوادگی باید پر شده باشد.'
+                    # required fields
+                    title = self.fetch_row_field(row_fields, 0)
+                    if not title:
+                        row_error = 'نام محصول اجباری است.'
 
-                    # mobile should be in correct format (Required field)
-                    mobile = ''
-                    try:
-                        mobile = self.fetch_row_field(row_fields, 2)
-                        mobile = self.validate_mobile(mobile) if mobile else ''
-                    except:
-                        row_error = "موبایل وارد شده معتبر نیست"
+                    text = self.fetch_row_field(row_fields, 1)
+                    if not text:
+                        row_error = 'توضیحات اجباری است.'
 
-                    # Optional
-                    national_id = ''
-                    try:
-                        national_id = self.fetch_row_field(row_fields, 3)
-                        if national_id:
-                            national_id = self.validate_national_id(self.fetch_row_field(row_fields, 3))
-                    except:
-                        row_error = "کد ملی وارد شده معتبر نیست"
+                    price = self.fetch_row_field(row_fields, 3)
+                    if not price:
+                        row_error = 'قیمت محصول اجباری است.'
 
-                    # one of mobile or national_id should be provided.
-                    if not username:
-                        username = mobile
-                    if not username:
-                        username = national_id
-                    if not username:
-                        row_error = 'حداقل یکی از فیلدهای نام کاربری، موبایل یا کد ملی باید وجود داشته باشد.'
+                    user_id = self.fetch_row_field(row_fields, 4)
+                    if not user_id:
+                        row_error = 'فروشنده محصول اجباری است.'
 
-                    # Get email
-                    email = ''
-                    try:
-                        e = row_fields[4]
-                        if e:
-                            email = self.validate_email(e)
-                    except:
-                        row_error = 'ایمیل وارد شده معتبر نیست.'
+                    category_id = self.fetch_row_field(row_fields, 5)
+                    if not category_id:
+                        row_error = 'فروشنده محصول اجباری است.'
 
-                    # Other info
-                    gender = self.fetch_row_field(row_fields, 5)
-                    if gender:
-                        gender = 'F' if str(gender).upper() == 'F' else 'M'
-                    birth_date = self.fetch_row_field(row_fields, 6)
-                    if birth_date:
-                        birth_date = str(birth_date).replace('-', '/')
-                        birth_date = unidecode(birth_date)
-                        birth_date = string_to_jdatetime(birth_date, only_date=True)
-                        if not birth_date:
-                            row_error = 'تاریخ تولد به فرمت مناسب ارسال نشده است. به طور مثال 1399/03/01'
-                    if not birth_date:
-                        birth_date = None
+                    tags = self.fetch_row_field(row_fields, 6)
+                    price = self.fetch_row_field(row_fields, 7)
+                    count = self.fetch_row_field(row_fields, 8)
+                    suggestion_count = self.fetch_row_field(row_fields, 9)
+                    status = self.fetch_row_field(row_fields, 10)
+                    if status not in [1, 0]:
+                        row_error = 'وضعیت تایید محصول باید یکی از دو گزینه 0(غیر فعال)، 1(فعال) باشد.'
 
-                    # personnel_code = self.fetch_row_field(row_fields, 8)
-                    # address = self.fetch_row_field(row_fields, 9)
-                    # father_name = self.fetch_row_field(row_fields, 10)
-                    # identity_number = self.fetch_row_field(row_fields, 11)
-                    # work_place = self.fetch_row_field(row_fields, 12)
-                    # work_position = self.fetch_row_field(row_fields, 13)
-                    password = self.validate_password(self.fetch_row_field(row_fields, 7))
-
-                    # Get group to assign to user (optional)
-                    group = []
-                    group_id = self.fetch_row_field(row_fields, 8)
-                    if group_id:
-                        group_id = group_id.split(',')
+                    colors = []
+                    colors_id = self.fetch_row_field(row_fields, 11)
+                    if colors_id:
+                        colors_id = colors_id.split(',')
                         try:
-                            for item in group_id:
+                            for item in colors_id:
                                 item = int(item)
-                                new_group = Group.objects.filter(id=item).first()
-                                if not new_group:
-                                    row_error = 'گروهی با این کد یافت نشد.'
+                                new_color = Color.objects.filter(id=item).first()
+                                if not new_color:
+                                    row_error = 'رنگی با این کد یافت نشد.'
                                 else:
-                                    group.append(new_group)
+                                    colors.append(new_color)
                         except:
-                            row_error = 'کد گروه به فرمت درست نیست.'
+                            row_error = 'کد رنگ به فرمت درست نیست.'
+
+                    sizes = []
+                    sizes_id = self.fetch_row_field(row_fields, 11)
+                    if sizes_id:
+                        sizes_id = sizes_id.split(',')
+                        try:
+                            for item in sizes_id:
+                                item = int(item)
+                                new_size = Color.objects.filter(id=item).first()
+                                if not new_size:
+                                    row_error = 'سایزی با این کد یافت نشد.'
+                                else:
+                                    sizes.append(new_size)
+                        except:
+                            row_error = 'کد سایز به فرمت درست نیست.'
+
 
                 except Exception as e:
                     row_error = 'خطا در اطلاعات'
