@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import transaction
+from django.utils.text import slugify
 from unidecode import unidecode
 from Product.models import Product, Color, Size
 
@@ -31,6 +32,9 @@ class Reader:
             'status': True
         }
 
+        xlrd.xlsx.ensure_elementtree_imported(False, None)
+        xlrd.xlsx.Element_has_iter = True
+
         try:
             workbook = xlrd.open_workbook(file_contents=file_content)
         except:
@@ -54,27 +58,27 @@ class Reader:
                     if not text:
                         row_error = 'توضیحات اجباری است.'
 
-                    price = self.fetch_row_field(row_fields, 3)
+                    price = self.fetch_row_field(row_fields, 2)
                     if not price:
                         row_error = 'قیمت محصول اجباری است.'
 
-                    user_id = self.fetch_row_field(row_fields, 4)
+                    user_id = self.fetch_row_field(row_fields, 3)
                     if not user_id:
                         row_error = 'فروشنده محصول اجباری است.'
 
-                    category_id = self.fetch_row_field(row_fields, 5)
+                    category_id = self.fetch_row_field(row_fields, 4)
                     if not category_id:
                         row_error = 'فروشنده محصول اجباری است.'
 
-                    tags = self.fetch_row_field(row_fields, 6)
-                    count = self.fetch_row_field(row_fields, 7)
-                    suggestion_count = self.fetch_row_field(row_fields, 8)
+                    tags = self.fetch_row_field(row_fields, 5)
+                    count = self.fetch_row_field(row_fields, 6)
+                    suggestion_count = self.fetch_row_field(row_fields, 7)
                     status = self.fetch_row_field(row_fields, 8)
-                    if status not in [1, 0]:
+                    if status not in ['1', '0']:
                         row_error = 'وضعیت تایید محصول باید یکی از دو گزینه 0(غیر فعال)، 1(فعال) باشد.'
 
                     colors = []
-                    colors_id = self.fetch_row_field(row_fields, 10)
+                    colors_id = self.fetch_row_field(row_fields, 9)
                     if colors_id:
                         colors_id = colors_id.split(',')
                         try:
@@ -89,7 +93,7 @@ class Reader:
                             row_error = 'کد رنگ به فرمت درست نیست.'
 
                     sizes = []
-                    sizes_id = self.fetch_row_field(row_fields, 11)
+                    sizes_id = self.fetch_row_field(row_fields, 10)
                     if sizes_id:
                         sizes_id = sizes_id.split(',')
                         try:
@@ -115,6 +119,7 @@ class Reader:
                     result['data'].append({
                         'product_data': {
                             'title': title,
+                            'slug': slugify(title, True),
                             'text': text,
                             'price': price,
                             'user_id': user_id,
@@ -156,9 +161,11 @@ class Reader:
                     result['products'].append([product, 'محصول ایجاد شد.'])
 
                     if colors:
-                        product.colors.add(colors)
+                        product.colors.set(colors)
                     if sizes:
-                        product.sizes.add(sizes)
+                        product.sizes.set(sizes)
+
+                    product.save()
 
                     if row_error:
                         result['status'] = False

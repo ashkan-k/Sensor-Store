@@ -1,5 +1,5 @@
 {% extends "Layouts/admin-master.html" %}
-{% load crispy_forms_tags public_tags static %}
+{% load crispy_forms_tags public_tags static humanize %}
 {% block Content %}
 
     <!-- Content Wrapper. Contains page content -->
@@ -58,7 +58,7 @@
                                                 {% endif %}
                                                 {% if field.name == 'file' %}
                                                     <p>دانلود نمونه فایل از <a
-                                                            href="{% static 'user_omport_example.xlsx' %}">
+                                                            href="{% static 'product_import_example.xlsx' %}">
                                                         اینجا </a></p>{% endif %}
                                                 {% if field.errors %}
                                                     <p><small class="text-danger" style="font-size: 14px"
@@ -83,6 +83,87 @@
                     </div>
                     <!-- /.card -->
                 </div>
+
+                <div class="col-md-12">
+                    {% if result %}
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h3 class="card-title">گزارش فایل</h3>
+
+                                        {% if result.msg %}
+                                            <div class="alert alert-danger"><h4>{{ result.msg }}</h4></div>
+                                        {% elif result.status %}
+                                            <h6 class="card-subtitle mt-3 mb-5">
+                                                مجموع ردیف‌های یافت شده در فایل:
+                                                {{ result.data|length }}
+                                                که از این تعداد
+                                                {{ result.products|length }}
+                                                محصول به روز رسانی شدند.
+                                            </h6>
+                                            {% if result.products %}
+                                                <table class="table table-responsive-lg table-responsive-sm table-bordered table-striped">
+                                                    <thead>
+                                                    <tr role="row">
+                                                        <th>#</th>
+                                                        <th>نام محصول</th>
+                                                        <th>نامک</th>
+                                                        <th>قیمت</th>
+                                                        <th>توضیحات</th>
+                                                        <th>وضعیت</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for data in result.products %}
+                                                        <tr role="row">
+                                                            <td>{{ forloop.counter }}</td>
+                                                            <td>{{ data.0.title }}</td>
+                                                            <td>{{ data.0.slug }}</td>
+                                                            <td>{{ data.0.price | intcomma:False | persian_int }}</td>
+                                                            <td>{{ data.1 }}</td>
+                                                            <td class="align-middle"><i class="fa fa-check-circle"
+                                                                                        style="color: #00c292;"></i>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            {% endif %}
+                                        {% else %}
+                                            <h6 class="card-subtitle mt-3 mb-5">خطاهای موجود در فایل در قسمت زیر ارائه شده
+                                                است.</h6>
+                                            {% if result.errors %}
+                                                <table class="table table-responsive-lg table-responsive-sm table-bordered table-striped">
+                                                    <thead>
+                                                    <tr role="row">
+                                                        <th>#</th>
+                                                        <th>شماره ردیف در فایل</th>
+                                                        <th>توضیحات</th>
+                                                        <th>وضعیت</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for err in result.errors %}
+                                                        <tr role="row">
+                                                            <td>{{ forloop.counter }}</td>
+                                                            <td>{{ err.0 }}</td>
+                                                            <td>{{ err.1 }}</td>
+                                                            <td><i class="fa fa-times-circle" style="color: red;"></i>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
             </div>
             <!-- /.container-fluid -->
         </section>
