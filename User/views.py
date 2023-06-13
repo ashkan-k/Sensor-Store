@@ -35,8 +35,7 @@ class UsersListView(PermissionMixin, ListView):
         return UserFilters(data=self.request.GET, queryset=queryset).qs
 
 
-class UsersCreateView(PermissionMixin, CreateView):
-    permissions = ['user_create']
+class UsersCreateView(SuperUserRequiredMixin, CreateView):
     template_name = "users/admin/users/form.html"
     model = User
     form_class = UserForm

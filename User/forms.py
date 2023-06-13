@@ -13,7 +13,8 @@ User = get_user_model()
 
 
 class UserSimpleForm(forms.ModelForm):
-    password2 = forms.CharField(max_length=100, required=True, widget=forms.PasswordInput(), label='تکرار رمز عبور')
+    password2 = forms.CharField(
+        max_length=100, required=True, widget=forms.PasswordInput(), label='تکرار رمز عبور')
 
     class Meta:
         model = User
@@ -43,7 +44,8 @@ class UserSimpleForm(forms.ModelForm):
 
         code = Code.objects.create_new_code(user)
         self.request.session['verify_phone'] = user.phone
-        messages.success(self.request, 'ثبت نام شما با موفقیت انجام شد. کد تایید حساب کاربری برای شما پیامک شد.')
+        messages.success(
+            self.request, 'ثبت نام شما با موفقیت انجام شد. کد تایید حساب کاربری برای شما پیامک شد.')
 
         sms_text = SMS_TEXTS['verify_code'].format(code.code)
         send_sms(user.phone, sms_text)
@@ -56,7 +58,8 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'phone', 'avatar', 'password', 'is_superuser']
+        fields = ['first_name', 'last_name', 'username', 'phone', 'avatar',
+                  'password', 'is_superuser', 'is_active', 'is_staff', 'address']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

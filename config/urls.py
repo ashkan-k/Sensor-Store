@@ -20,6 +20,7 @@ urlpatterns = [
     path('', include('ContactUs.urls')),
     path('', include('Cart.urls')),
     path('', include('User.urls')),
+    path('', include('Product.urls')),
 
     ## Auth ##
     path('', include('Auth.urls')),

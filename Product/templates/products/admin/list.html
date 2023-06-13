@@ -7,13 +7,13 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">کاربران</h1>
+          <h1 class="m-0 text-dark">محصولات</h1>
         </div>
         <!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-left">
             <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">خانه</a></li>
-            <li class="breadcrumb-item active">کاربران</li>
+            <li class="breadcrumb-item active">محصولات</li>
           </ol>
         </div>
         <!-- /.col -->
@@ -31,11 +31,11 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">جدول کاربران</h3>
+              <h3 class="card-title">جدول محصولات</h3>
               <br />
               <biv>
-                <a href="{% url 'users-create' %}" class="btn btn-success"
-                  >ساخت کاربر جدید</a
+                <a href="{% url 'products-create' %}" class="btn btn-success"
+                  >ساخت محصول جدید</a
                 >
               </biv>
               <div class="card-tools">
@@ -61,39 +61,41 @@
                 <tbody>
                   <tr>
                     <th>شناسه</th>
-                    <th>نام</th>
-                    <th>نام خانوادگی</th>
-                    <th>نام کاربری</th>
-                    <th>شماره موبایل</th>
-                    <th>وضعیت مدیریت</th>
+                    <th>نام محصول</th>
+                    <th>نامک</th>
+                    <th>قیمت</th>
+                    <th>فروشنده</th>
+                    <th>دسته بندی</th>
+                    <th>وضعیت</th>
+                    <th>تاریخ و زمان ثبت</th>
                     <th>عملیات</th>
                   </tr>
                   {% for item in object_list %}
                   <tr>
                     <td>{{ item.id |  default:'---' }}</td>
-                    <td>{{ item.first_name |  default:'---' }}</td>
-                    <td>{{ item.last_name |  default:'---' }}</td>
-                    <td>{{ item.username |  default:'---'  }}</td>
-                    <td>{{ item.phone |  default:'---'  }}</td>
-
-                    {% if item.is_superuser == True %}
-                    <td class="badge badge-success mt-3">فعال</td>
+                    <td>{{ item.title |  default:'---' }}</td>
+                    <td>{{ item.slug |  default:'---' }}</td>
+                    <td>{{ item.price |  default:'---' }}</td>
+                    <td>{{ item.user |  default:'---' }}</td>
+                    <td>{{ item.category |  default:'---' }}</td>
+                    {% if item.status == True %}
+                    <td class="badge badge-success mt-3">بررسی شده</td>
                     {% else %}
-                    <td class="badge badge-warning mt-3">غیر فعال</td>
+                    <td class="badge badge-warning mt-3">بررسی نشده</td>
                     {% endif %}
-
+                    <td>{{ item.created_at |  default:'---' }}</td>
                     <td>
                       <span type="submit" class="btn btn-info m-1"
                         ><a
                           style="color: white"
-                          href="{% url 'users-update' item.id %}"
+                          href="{% url 'products-update' item.id %}"
                         >
                           ویرایش</a
                         ></span
                       >
                       <form
                         method="post"
-                        action="{% url 'users-delete' item.id %}"
+                        action="{% url 'products-delete' item.id %}"
                       >
                         {% csrf_token %}
                         <input type="submit" value="حذف"  class="btn btn-danger m-1"
