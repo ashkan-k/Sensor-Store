@@ -171,7 +171,7 @@ class Reader:
                                 setattr(product, key, value)
 
                             product.save()
-                            result['users'].append([product, 'اطلاعات محصول به روز رسانی شد.'])
+                            result['products'].append([product, 'اطلاعات محصول به روز رسانی شد.'])
                     else:
                         product = Product.objects.create(**product_data)
                         result['products'].append([product, 'محصول ایجاد شد.'])
