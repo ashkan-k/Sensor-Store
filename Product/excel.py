@@ -119,7 +119,6 @@ class Reader:
                     result['data'].append({
                         'product_data': {
                             'title': title,
-                            'slug': slugify(title, True),
                             'text': text,
                             'price': price,
                             'user_id': user_id,
@@ -153,12 +152,29 @@ class Reader:
                     item = result['data'][index]
                     product_data = item.get('product_data')
 
+                    slug = slugify(product_data.get('title'), True)
+
                     colors = item.pop('colors')
                     sizes = item.pop('sizes')
 
-                    product = Product.objects.create(**product_data)
+                    qs = Product.objects.filter(slug=slug)
+                    if qs.count() > 0:
+                        product = qs.first()
+                        if product:
+                            if not self.override_values:
+                                # در این حالت نباید مقادیر کاربر به روز رسانی شوند.
+                                continue
+                            for key, value in product_data.items():
+                                if not value:
+                                    # فقط متغیرهایی که مقدار داشته باشند به روز رسانی می‌شوند.
+                                    continue
+                                setattr(product, key, value)
 
-                    result['products'].append([product, 'محصول ایجاد شد.'])
+                            product.save()
+                            result['users'].append([product, 'اطلاعات محصول به روز رسانی شد.'])
+                    else:
+                        product = Product.objects.create(**product_data)
+                        result['products'].append([product, 'محصول ایجاد شد.'])
 
                     if colors:
                         product.colors.set(colors)
