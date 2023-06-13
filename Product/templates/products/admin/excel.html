@@ -1,130 +1,92 @@
 {% extends "Layouts/admin-master.html" %}
 {% load crispy_forms_tags public_tags static %}
-
 {% block Content %}
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-subtitle">
-                        در این قسمت می‌توانید کاربران جدیدی به سامانه از طریق فایل اکسل اضافه کنید.
-                        یا اطلاعات کاربران موجود را به روز رسانی کنید.
-                    </h6>
 
-                    <!-- Tab panes -->
-                    <form class="form-material row" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {% if request.GET.redirect_url %}
-                            <input type="hidden" name="redirect_url" value="{{ request.GET.redirect_url }}">{% endif %}
-
-                        {% for field in form %}
-                            {% if field.name != 'company' or request.user.is_staff %}
-                                <div class="col-md-6 form-item-field form-group {% if field.errors %}has-danger{% endif %}">
-                                    <label class="control-label">{{ field.label }}</label>
-                                    {{ field|addclass:"form-control" }}
-                                    {% if field.help_text %}
-                                        <p><small class="form-control-feedback">{{ field.help_text }} </small></p>
-                                    {% endif %}
-                                    {% if field.name == 'file' %}
-                                        <p>دانلود نمونه فایل از <a href="{% static 'user_omport_example.xlsx' %}">
-                                            اینجا </a></p>{% endif %}
-                                    {% if field.errors %}
-                                        <p><small class="form-control-feedback"
-                                                  style="color: red">{{ field.errors.0 }}</small></p>
-                                    {% endif %}
-                                </div>
-
-                                {% if request.user.is_staff %}
-                                    {% if field.name == 'company' %}
-                                        <div class="col-md-6"></div>
-                                        <div class="col-md-6"></div>
-                                    {% endif %}
-                                {% elif field.name == 'file' %}
-                                    <div class="col-md-6"></div>
-                                {% endif %}
-
-                            {% endif %}
-                        {% endfor %}
-                        <div class="col-md-12" style="text-align: left;">
-                            <input type="submit" class="btn btn-primary btn-submit" value="آپلود فایل اکسل">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% if result %}
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title">گزارش فایل</h3>
-
-                        {% if result.msg %}
-                            <div class="alert alert-danger"><h4>{{ result.msg }}</h4></div>
-                        {% elif result.status %}
-                            <h6 class="card-subtitle">
-                                مجموع ردیف‌های یافت شده در فایل:
-                                {{ result.data|length }}
-                                که از این تعداد
-                                {{ result.users|length }}
-                                کاربر به روز رسانی شدند.
-                            </h6>
-                            {% if result.users %}
-                                <table class="table table-responsive-lg table-responsive-sm table-bordered table-striped">
-                                    <thead>
-                                    <tr role="row">
-                                        <th>#</th>
-                                        <th>نام و نام خانوادگی</th>
-                                        <th>کد ملی</th>
-                                        <th>موبایل</th>
-                                        <th>توضیحات</th>
-                                        <th>وضعیت</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for data in result.users %}
-                                        <tr role="row">
-                                            <td>{{ forloop.counter }}</td>
-                                            <td>{{ data.0.fullname }}</td>
-                                            <td>{{ data.0.national_id }}</td>
-                                            <td>{{ data.0.mobile }}</td>
-                                            <td>{{ data.1 }}</td>
-                                            <td class="align-middle"><i class="fa fa-check-circle"
-                                                                        style="color: #00c292;"></i></td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% endif %}
-                        {% else %}
-                            <h6 class="card-subtitle">خطاهای موجود در فایل در قسمت زیر ارائه شده است.</h6>
-                            {% if result.errors %}
-                                <table class="table table-responsive-lg table-responsive-sm table-bordered table-striped">
-                                    <thead>
-                                    <tr role="row">
-                                        <th>#</th>
-                                        <th>شماره ردیف در فایل</th>
-                                        <th>توضیحات</th>
-                                        <th>وضعیت</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for err in result.errors %}
-                                        <tr role="row">
-                                            <td>{{ forloop.counter }}</td>
-                                            <td>{{ err.0 }}</td>
-                                            <td>{{ err.1 }}</td>
-                                            <td><i class="fa fa-times-circle" style="color: red;"></i></td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% endif %}
-                        {% endif %}
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark">محصولات</h1>
                     </div>
+                    <!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-left">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'dashboard' %}">خانه</a>
+                            </li>
+                            <li class="breadcrumb-item active">محصولات</li>
+                        </ol>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">افزودن محصول</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form role="form" method="post" enctype="multipart/form-data">
+                            <div class="card-body">
+                                {% csrf_token %}
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        {% for field in form %}
+                                            <div class="col-{% if field.name in 'text' %}12{% else %}6{% endif %}">
+                                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+
+                                                {{ field|addclass:"form-control" }}
+
+                                                {% if field.help_text %}
+                                                    <p><small
+                                                            style="font-size: 14px">{{ field.help_text|safe }} </small>
+                                                    </p>
+                                                {% endif %}
+                                                {% if field.name == 'file' %}
+                                                    <p>دانلود نمونه فایل از <a
+                                                            href="{% static 'user_omport_example.xlsx' %}">
+                                                        اینجا </a></p>{% endif %}
+                                                {% if field.errors %}
+                                                    <p><small class="text-danger" style="font-size: 14px"
+                                                              style="color:red">{{ field.errors.0|safe }}</small></p>
+                                                {% endif %}
+                                                {% if field.non_field_errors %}
+                                                    <p><small class="text-danger" style="font-size: 20px"
+                                                              style="color:red">{{ field.non_field_errors.0|safe }}</small>
+                                                    </p>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">ارسال</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
                 </div>
             </div>
-        </div>
-    {% endif %}
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+
 {% endblock %}
