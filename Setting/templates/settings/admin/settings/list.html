@@ -1,6 +1,4 @@
-{% extends "Layouts/admin-master.html" %}
-{% load static public_tags %}
-{% block Content %}
+{% extends "Layouts/admin-master.html" %} {% block Content %}
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -9,13 +7,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">ارتباط باما</h1>
+                        <h1 class="m-0 text-dark">تنظیمات</h1>
                     </div>
                     <!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-left">
                             <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">خانه</a></li>
-                            <li class="breadcrumb-item active">ارتباط باما</li>
+                            <li class="breadcrumb-item active">تنظیمات</li>
                         </ol>
                     </div>
                     <!-- /.col -->
@@ -33,13 +31,13 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">جدول ارتباط باما</h3>
+                                <h3 class="card-title">جدول تنظیمات</h3>
                                 <br/>
-{#                                <biv>#}
-{#                                    <a href="{% url 'contact_us-create' %}" class="btn btn-success"#}
-{#                                    >ساخت محصول جدید</a#}
-{#                                    >#}
-{#                                </biv>#}
+                                <biv>
+                                    <a href="{% url 'settings-create' %}" class="btn btn-success"
+                                    >ساخت محصول جدید</a
+                                    >
+                                </biv>
                                 <div class="card-tools">
                                     <div class="input-group input-group-sm" style="width: 150px">
                                         <input
@@ -63,36 +61,29 @@
                                     <tbody>
                                     <tr>
                                         <th>شناسه</th>
-                                        <th>نام</th>
-                                        <th>نام خانوادگی</th>
-                                        <th>ایمیل</th>
-                                        <th>شماره موبایل</th>
                                         <th>عنوان</th>
-                                        <th>متن</th>
-                                        <th>تاریخ و زمان ثبت</th>
+                                        <th>مقدار</th>
                                         <th>عملیات</th>
                                     </tr>
                                     {% for item in object_list %}
                                         <tr>
                                             <td>{{ item.id |  default:'---' }}</td>
+                                            <td>{{ item.key | default:'---' }}</td>
 
-                                            <td>{{ item.first_name | default:'---' }}</td>
+                                            <td title="{{ item.value }}">{{ item.value | truncatechars:80 | default:'---' }}</td>
 
-                                            <td>{{ item.last_name | default:'---' }}</td>
-
-                                            <td>{{ item.email | default:'---' }}</td>
-
-                                            <td>{{ item.phone | default:'---' }}</td>
-
-                                            <td>{{ item.title | default:'---' }}</td>
-
-                                            <td title="{{ item.text }}">{{ item.text | truncatechars:25 | default:'---' }}</td>
-
-                                            <td>{{ item.created_at | jdate |  default:'---' }}</td>
                                             <td>
+                                                  <span type="submit" class="btn btn-info m-1"
+                                                  ><a
+                                                          style="color: white"
+                                                          href="{% url 'settings-update' item.id %}"
+                                                  >
+                                                      ویرایش</a
+                                                  ></span
+                                                  >
                                                 <form
                                                         method="post"
-                                                        action="{% url 'contact_us-delete' item.id %}"
+                                                        action="{% url 'settings-delete' item.id %}"
                                                 >
                                                     {% csrf_token %}
                                                     <input type="submit" value="حذف" class="btn btn-danger m-1">

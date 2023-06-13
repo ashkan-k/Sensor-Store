@@ -23,7 +23,7 @@ class Product(CustomModel):
     title = models.CharField(verbose_name='عنوان', max_length=50)
     slug = models.CharField(verbose_name='اسلاگ (نامک)', unique=True, blank=True, max_length=50)
     text = models.TextField(verbose_name='متن')
-    tags = models.CharField(verbose_name='تگ ها', max_length=250, help_text='تگ ها را با ویرگول از هم جداکنید.')
+    tags = models.CharField(verbose_name='تگ ها', max_length=250, help_text='تگ ها را با ویرگول از هم جداکنید.', blank=True, null=True)
     price = models.PositiveBigIntegerField(verbose_name='قمیت')
     status = models.BooleanField(verbose_name='وضعیت تایید', default=False)
     count = models.IntegerField(verbose_name='تعداد', default=1)
