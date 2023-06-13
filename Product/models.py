@@ -9,6 +9,8 @@ from Comment.models import Comment
 from Like_And_DisLike.models import Like_And_DisLike
 from django.shortcuts import reverse
 
+from utils.models import CustomModel
+
 
 def upload_product_original_image(instance, filename):
     path = 'products/' + slugify(instance.title, allow_unicode=True)
@@ -17,19 +19,14 @@ def upload_product_original_image(instance, filename):
     return path + '/' + name
 
 
-class Product(models.Model):
+class Product(CustomModel):
     title = models.CharField(verbose_name='عنوان', max_length=50)
     slug = models.CharField(verbose_name='اسلاگ (نامک)', unique=True, blank=True, max_length=50)
-    short_text = models.TextField(verbose_name='توضیحات', max_length=250)
     text = models.TextField(verbose_name='متن')
-    tags = models.CharField(verbose_name='تگ ها', max_length=250)
-    price = models.IntegerField(verbose_name='قمیت')
-    viewCount = models.IntegerField(verbose_name='تعداد بازدیدها', default=0)
-    likeCount = models.IntegerField(verbose_name='تعداد لایک ها', default=0)
-    commentCount = models.IntegerField(verbose_name='تعداد نظرات', default=0)
+    tags = models.CharField(verbose_name='تگ ها', max_length=250, help_text='تگ ها را با ویرگول از هم جداکنید.')
+    price = models.PositiveBigIntegerField(verbose_name='قمیت')
     status = models.BooleanField(verbose_name='وضعیت تایید', default=False)
     count = models.IntegerField(verbose_name='تعداد', default=1)
-    is_removed = models.BooleanField(verbose_name='آیا حذف شده', default=False)
 
     suggestion_count = models.IntegerField(verbose_name='تعداد پیشنهاد خرید', default=0)
     original_image = models.ImageField(upload_to=upload_product_original_image, verbose_name='عکس', null=True)
@@ -37,14 +34,11 @@ class Product(models.Model):
     user = models.ForeignKey(verbose_name='فروشنده', to=get_user_model(), on_delete=models.CASCADE)
     category = models.ForeignKey(verbose_name='دسته بندی', to=Category, on_delete=models.CASCADE)
 
-    colors = models.ManyToManyField(to='Color', related_query_name='product', verbose_name='رنگ ها')
-    sizes = models.ManyToManyField(to='Size', related_query_name='product', verbose_name='سایز ها')
+    colors = models.ManyToManyField(to='Color', related_query_name='product', verbose_name='رنگ ها', blank=True)
+    sizes = models.ManyToManyField(to='Size', related_query_name='product', verbose_name='سایز ها', blank=True)
 
     comments = GenericRelation(Comment, related_query_name='products')
     likes_and_dislikes = GenericRelation(Like_And_DisLike, related_query_name='products')
-
-    created_at = models.DateTimeField(verbose_name='تاریخ ثبت', auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name='تاریخ ویرایش', auto_now=True)
 
     class Meta:
         verbose_name = 'محصول'

@@ -8,6 +8,7 @@ from ACL.mixins import SuperUserRequiredMixin
 from .forms import ProductForm
 from .models import Product
 
+
 class ProductListView(SuperUserRequiredMixin, ListView):
     model = Product
     ordering = ['-created_at']
@@ -22,7 +23,7 @@ class ProductCreateView(SuperUserRequiredMixin, CreateView):
 
 
 class ProductUpdateView(SuperUserRequiredMixin, UpdateView):
-    template_name =  "products/admin/form.html"
+    template_name = "products/admin/form.html"
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy("products-list")
@@ -30,14 +31,13 @@ class ProductUpdateView(SuperUserRequiredMixin, UpdateView):
 
 class ProductDeleteView(SuperUserRequiredMixin, DeleteView):
     model = Product
-    template_name ='products/admin/list.html'
+    template_name = 'products/admin/list.html'
     success_url = reverse_lazy("products-list")
 
     def dispatch(self, *args, **kwargs):
         resp = super().dispatch(*args, **kwargs)
         messages.success(self.request, 'آیتم مورد نظر با موفقیت حدف شد.')
         return resp
-
 
 # ======================================================================
 
@@ -107,7 +107,6 @@ class ProductDeleteView(SuperUserRequiredMixin, DeleteView):
 #     serializer_class = ImageSerializer
 #     pagination_class = CustomPagination
 #     search_fields = ['product__title']
-
 
 
 # class ColorsViewSet(ModelViewSet):
