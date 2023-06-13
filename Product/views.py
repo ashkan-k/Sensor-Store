@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, FormView
 
 from ACL.mixins import SuperUserRequiredMixin
+from .excel import Reader
 from .forms import ProductForm, ExcelImportForm
 from .models import Product
 
@@ -48,9 +49,8 @@ class ProductImportView(SuperUserRequiredMixin, FormView):
     def form_valid(self, form):
         override_values = form.cleaned_data.get('override_values', False)
         ignore_errors = form.cleaned_data.get('ignore_errors', False)
-        company = form.cleaned_data.get('company', None)
 
-        reader = Reader(override_values=override_values, ignore_errors=ignore_errors, company=company)
+        reader = Reader(override_values=override_values, ignore_errors=ignore_errors)
         file_content = form.cleaned_data.get('file').read()
         result = reader.read(file_content)
         form = self.form_class

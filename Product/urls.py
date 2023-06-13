@@ -8,6 +8,9 @@ urlpatterns = [
     path('dashboard/products/create/', ProductCreateView.as_view(), name='products-create'),
     path('dashboard/products/update/<int:pk>/', ProductUpdateView.as_view(), name='products-update'),
     path('dashboard/products/delete/<int:pk>/', ProductDeleteView.as_view(), name='products-delete'),
+
+    path("dashboard/products/import/", ProductImportView.as_view(), name='products-import'),
+
 ]
 
 
