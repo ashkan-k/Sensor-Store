@@ -65,27 +65,27 @@ class ProductImportView(SuperUserRequiredMixin, FormView):
 class ColorListView(SuperUserRequiredMixin, ListView):
     model = Color
     ordering = ['-created_at']
-    template_name = 'products/admin/sizes/list.html'
+    template_name = 'products/admin/colors/list.html'
 
 
 class ColorCreateView(SuperUserRequiredMixin, CreateView):
-    template_name = "products/admin/sizes/form.html"
+    template_name = "products/admin/colors/form.html"
     model = Color
     form_class = ColorForm
-    success_url = reverse_lazy("sizes-list")
+    success_url = reverse_lazy("colors-list")
 
 
 class ColorUpdateView(SuperUserRequiredMixin, UpdateView):
-    template_name = "products/admin/sizes/form.html"
+    template_name = "products/admin/colors/form.html"
     model = Color
     form_class = ColorForm
-    success_url = reverse_lazy("sizes-list")
+    success_url = reverse_lazy("colors-list")
 
 
 class ColorDeleteView(SuperUserRequiredMixin, DeleteView):
     model = Color
-    template_name = 'products/admin/sizes/list.html'
-    success_url = reverse_lazy("sizes-list")
+    template_name = 'products/admin/colors/list.html'
+    success_url = reverse_lazy("colors-list")
 
     def dispatch(self, *args, **kwargs):
         resp = super().dispatch(*args, **kwargs)
