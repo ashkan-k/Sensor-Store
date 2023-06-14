@@ -91,6 +91,54 @@
 
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
+                            <i class="nav-icon fa fa-paint-brush"></i>
+                            <p>
+                                رنگ ها
+                                <i class="right fa fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'colors-create' %}" class="nav-link">
+                                    <i class="fa fa-circle-o nav-icon"></i>
+                                    <p>ساخت رنگ جدید</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'colors-list' %}" class="nav-link">
+                                    <i class="fa fa-circle-o nav-icon"></i>
+                                    <p>لیست رنگ ها</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fa fa-th-large"></i>
+                            <p>
+                                سایز ها
+                                <i class="right fa fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'sizes-create' %}" class="nav-link">
+                                    <i class="fa fa-circle-o nav-icon"></i>
+                                    <p>ساخت سایز جدید</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'sizes-list' %}" class="nav-link">
+                                    <i class="fa fa-circle-o nav-icon"></i>
+                                    <p>لیست سایز ها</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
                             <i class="nav-icon fa fa-list-alt"></i>
                             <p>
                                 دسته بندی ها
