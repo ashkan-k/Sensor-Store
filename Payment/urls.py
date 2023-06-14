@@ -1,14 +1,11 @@
-from django.urls import path , include
+from django.urls import path
 from .views import *
-from rest_framework.routers import SimpleRouter
 
-router = SimpleRouter()
-router.register('successful' , SuccessfulPaymentsViewSet)
-router.register('unsuccessful' , UnSuccessfulPaymentsViewSet)
+urlpatterns = []
 
-urlpatterns = [
-    path('' , include(router.urls)),
-    path('change/status/' , ChangePaymentStatus.as_view())
+dashboard_urls = [
+    path('dashboard/payments/', PaymentListView.as_view(), name='payments-list'),
+    path('dashboard/payments/delete/<int:pk>/', PaymentDeleteView.as_view(), name='payments-delete'),
 ]
 
-
+urlpatterns += dashboard_urls

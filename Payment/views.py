@@ -1,57 +1,35 @@
+from django.conf import settings
+from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DeleteView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 
+from ACL.mixins import SuperUserRequiredMixin
 from Permission.admin import IsAdminMixin
 from config.pagination import CustomPagination
 from django.utils.translation import gettext_lazy as _
 from .models import *
 from .serializer import *
 
-
-class SuccessfulPaymentsViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsAdminMixin]
-    queryset = Payment.objects.filter(status=True)
-    serializer_class = PaymentSerializer
-    pagination_class = CustomPagination
-    search_fields = [
-        'user__username',
-        'amount',
-        'coupon__code',
-        'ref_code',
-    ]
+""" Payment """
 
 
-class UnSuccessfulPaymentsViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsAdminMixin]
-    queryset = Payment.objects.filter(status=False)
-    serializer_class = PaymentSerializer
-    pagination_class = CustomPagination
-    search_fields = [
-        'user__username',
-        'amount',
-        'coupon__code',
-        'ref_code',
-    ]
+class PaymentListView(SuperUserRequiredMixin, ListView):
+    model = Payment
+    paginate_by = settings.PAGINATION_NUMBER
+    ordering = ['-created_at']
+    template_name = 'payments/admin/payments/list.html'
 
-############################################################
 
-class ChangePaymentStatus(APIView):
-    permission_classes = [IsAuthenticated, IsAdminMixin]
+class PaymentDeleteView(SuperUserRequiredMixin, DeleteView):
+    model = Payment
+    template_name = 'payments/admin/payments/list.html'
+    success_url = reverse_lazy("payments-list")
 
-    def post(self , request):
-        if self.request.POST.get('type') == 'success':
-            pk = self.request.POST.get('id')
-            payment = Payment.objects.get(pk=pk)
-            payment.status = True
-            payment.save()
-
-            return Response( {'detail' : _('payment status has been set TRUE')}, 200)
-        else:
-            pk = self.request.POST.get('id')
-            payment = Payment.objects.get(pk=pk)
-            payment.status = False
-            payment.save()
-
-            return Response({'detail' : _('payment status has been set FALSE')}, 200)
+    def dispatch(self, *args, **kwargs):
+        resp = super().dispatch(*args, **kwargs)
+        messages.success(self.request, 'آیتم مورد نظر با موفقیت حدف شد.')
+        return resp
