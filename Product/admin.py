@@ -11,7 +11,7 @@ class NotifyUserAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
 
 
-@admin.register(Image)
+@admin.register(Gallery)
 class ProductImagesAdmin(admin.ModelAdmin):
     list_display = [ "product" , "image" ]
     readonly_fields = ['created_at', 'updated_at']

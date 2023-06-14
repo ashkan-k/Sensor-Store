@@ -95,18 +95,15 @@ class Size(CustomModel):
 ###############################################################
 
 def upload_product_images(instance, filename):
-    path = 'products/' + slugify(instance.product.title, allow_unicode=True) + '/images/'
+    path = 'products/gallery/' + slugify(instance.product.title, allow_unicode=True)
     name = str(time.time()) + '-' + str(get_random_string()) + '-' + filename
 
     return path + '/' + name
 
 
-class Image(models.Model):
+class Gallery(CustomModel):
     image = models.ImageField(upload_to=upload_product_images, verbose_name='عکس', null=True)
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE, related_name='images', verbose_name='محصول')
-
-    created_at = models.DateTimeField(verbose_name='تاریخ ثبت', auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name='تاریخ ویرایش', auto_now=True)
 
     class Meta:
         verbose_name = 'عکس'
