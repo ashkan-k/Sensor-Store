@@ -1,0 +1,101 @@
+{% extends "Layouts/admin-master.html" %} {% block Content %}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark">رنگ ها</h1>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-left">
+                            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">خانه</a></li>
+                            <li class="breadcrumb-item active">رنگ ها</li>
+                        </ol>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">جدول رنگ ها</h3>
+                                <br/>
+                                <biv>
+                                    <a href="{% url 'colors-create' %}" class="btn btn-success"
+                                    >ساخت رنگ جدید</a
+                                    >
+                                </biv>
+                                <div class="card-tools">
+                                    <div class="input-group input-group-sm" style="width: 150px">
+                                        <input
+                                                type="text"
+                                                name="table_search"
+                                                class="form-control float-right"
+                                                placeholder="جستجو"
+                                        />
+
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-default">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover">
+                                    <tbody>
+                                    <tr>
+                                        <th>شناسه</th>
+                                        <th>نام رنگ</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                    {% for item in object_list %}
+                                        <tr>
+                                            <td>{{ item.id |  default:'---' }}</td>
+                                            <td>{{ item.name |  default:'---' }}</td>
+                                            <td>
+                                              <span type="submit" class="btn btn-info m-1"><a
+                                                      style="color: white"
+                                                      href="{% url 'colors-update' item.id %}">
+                                                  ویرایش</a>
+                                              </span>
+                                                <form
+                                                        method="post"
+                                                        action="{% url 'colors-delete' item.id %}">
+                                                    {% csrf_token %}
+                                                    <input type="submit" value="حذف" class="btn btn-danger m-1">
+                                                </form>
+                                                <!-- <span class="badge bg-danger"><a href="{% url 'categories-delete' item.id %}"> حذف</a></span> -->
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+
+{% endblock %}

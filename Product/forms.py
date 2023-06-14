@@ -1,6 +1,6 @@
 from django import forms
 
-from Product.models import Product
+from Product.models import Product, Color, Size
 
 
 class ProductForm(forms.ModelForm):
@@ -29,3 +29,15 @@ class ExcelImportForm(forms.Form):
         help_text='با انتخاب این گزینه، در صورتی که سطری از کاربرها قبلا تعریف شده باشد،'
                   ' و مجدد در فایل اکسل وجود داشته باشد، اطلاعات کاربر به روز رسانی خواهند شد.'
     )
+
+
+class ColorForm(forms.ModelForm):
+    class Meta:
+        model = Color
+        fields = '__all__'
+
+
+class SizeForm(forms.ModelForm):
+    class Meta:
+        model = Size
+        fields = '__all__'

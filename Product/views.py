@@ -7,25 +7,27 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, F
 
 from ACL.mixins import SuperUserRequiredMixin
 from .excel import Reader
-from .forms import ProductForm, ExcelImportForm
-from .models import Product
+from .forms import ProductForm, ExcelImportForm, ColorForm, SizeForm
+from .models import Product, Color, Size
+
+""" Products """
 
 
 class ProductListView(SuperUserRequiredMixin, ListView):
     model = Product
     ordering = ['-created_at']
-    template_name = 'products/admin/list.html'
+    template_name = 'products/admin/products/list.html'
 
 
 class ProductCreateView(SuperUserRequiredMixin, CreateView):
-    template_name = "products/admin/form.html"
+    template_name = "products/admin/products/form.html"
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy("products-list")
 
 
 class ProductUpdateView(SuperUserRequiredMixin, UpdateView):
-    template_name = "products/admin/form.html"
+    template_name = "products/admin/products/form.html"
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy("products-list")
@@ -33,7 +35,7 @@ class ProductUpdateView(SuperUserRequiredMixin, UpdateView):
 
 class ProductDeleteView(SuperUserRequiredMixin, DeleteView):
     model = Product
-    template_name = 'products/admin/list.html'
+    template_name = 'products/admin/products/list.html'
     success_url = reverse_lazy("products-list")
 
     def dispatch(self, *args, **kwargs):
@@ -44,7 +46,7 @@ class ProductDeleteView(SuperUserRequiredMixin, DeleteView):
 
 class ProductImportView(SuperUserRequiredMixin, FormView):
     form_class = ExcelImportForm
-    template_name = "products/admin/excel.html"
+    template_name = "products/admin/products/excel.html"
 
     def form_valid(self, form):
         override_values = form.cleaned_data.get('override_values', False)
@@ -55,6 +57,74 @@ class ProductImportView(SuperUserRequiredMixin, FormView):
         result = reader.read(file_content)
         form = self.form_class
         return render(self.request, self.template_name, locals())
+
+
+""" Colors """
+
+
+class ColorListView(SuperUserRequiredMixin, ListView):
+    model = Color
+    ordering = ['-created_at']
+    template_name = 'products/admin/sizes/list.html'
+
+
+class ColorCreateView(SuperUserRequiredMixin, CreateView):
+    template_name = "products/admin/sizes/form.html"
+    model = Color
+    form_class = ColorForm
+    success_url = reverse_lazy("sizes-list")
+
+
+class ColorUpdateView(SuperUserRequiredMixin, UpdateView):
+    template_name = "products/admin/sizes/form.html"
+    model = Color
+    form_class = ColorForm
+    success_url = reverse_lazy("sizes-list")
+
+
+class ColorDeleteView(SuperUserRequiredMixin, DeleteView):
+    model = Color
+    template_name = 'products/admin/sizes/list.html'
+    success_url = reverse_lazy("sizes-list")
+
+    def dispatch(self, *args, **kwargs):
+        resp = super().dispatch(*args, **kwargs)
+        messages.success(self.request, 'آیتم مورد نظر با موفقیت حدف شد.')
+        return resp
+
+
+""" Sizes """
+
+
+class SizeListView(SuperUserRequiredMixin, ListView):
+    model = Size
+    ordering = ['-created_at']
+    template_name = 'products/admin/sizes/list.html'
+
+
+class SizeCreateView(SuperUserRequiredMixin, CreateView):
+    template_name = "products/admin/sizes/form.html"
+    model = Size
+    form_class = SizeForm
+    success_url = reverse_lazy("sizes-list")
+
+
+class SizeUpdateView(SuperUserRequiredMixin, UpdateView):
+    template_name = "products/admin/sizes/form.html"
+    model = Size
+    form_class = SizeForm
+    success_url = reverse_lazy("sizes-list")
+
+
+class SizeDeleteView(SuperUserRequiredMixin, DeleteView):
+    model = Size
+    template_name = 'products/admin/sizes/list.html'
+    success_url = reverse_lazy("sizes-list")
+
+    def dispatch(self, *args, **kwargs):
+        resp = super().dispatch(*args, **kwargs)
+        messages.success(self.request, 'آیتم مورد نظر با موفقیت حدف شد.')
+        return resp
 
 # ======================================================================
 

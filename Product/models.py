@@ -56,28 +56,22 @@ class Product(CustomModel):
         return super().save(*args, **kwargs)
 
 
-class NotifyUser(models.Model):
+class NotifyUser(CustomModel):
     user = models.ForeignKey(verbose_name='کاربر', to=get_user_model(), related_name='notifies',
                              on_delete=models.CASCADE)
     product = models.ForeignKey(verbose_name='محصول', to=Product, related_name='notifies', on_delete=models.CASCADE)
     active = models.BooleanField(verbose_name='وضعیت فعال', default=True)
-
-    created_at = models.DateTimeField(verbose_name='تاریخ ثبت', auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name='تاریخ ویرایش', auto_now=True)
 
     class Meta:
         verbose_name = 'اطلاع رسانی'
         verbose_name_plural = 'اطلاع رسانی ها'
 
     def __str__(self):
-        return self.user.username + '-' + self.product.title
+        return self.user.fullname() + '-' + self.product.title
 
 
-class Color(models.Model):
+class Color(CustomModel):
     name = models.CharField(verbose_name='نام', max_length=50)
-
-    created_at = models.DateTimeField(verbose_name='تاریخ ثبت', auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name='تاریخ ویرایش', auto_now=True)
 
     class Meta:
         verbose_name = 'رنگ'
@@ -87,11 +81,8 @@ class Color(models.Model):
         return self.name
 
 
-class Size(models.Model):
+class Size(CustomModel):
     title = models.CharField(verbose_name='عنوان', max_length=50)
-
-    created_at = models.DateTimeField(verbose_name='تاریخ ثبت', auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name='تاریخ ویرایش', auto_now=True)
 
     class Meta:
         verbose_name = 'سایز'
