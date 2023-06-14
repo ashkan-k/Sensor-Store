@@ -89,15 +89,20 @@
                                             <td title="{{ item.text }}">{{ item.text | truncatechars:25 | default:'---' }}</td>
 
                                             <td>{{ item.created_at | jdate |  default:'---' }}</td>
-                                            <td>
-                                                <form
-                                                        method="post"
-                                                        action="{% url 'contact_us-delete' item.id %}"
-                                                >
+                                               <td>
+
+                                                <form id="frm_delete"
+                                                      method="post"
+                                                      action="{% url 'contact_us-delete' item.id %}">
                                                     {% csrf_token %}
-                                                    <input type="submit" value="حذف" class="btn btn-danger m-1">
                                                 </form>
-                                                <!-- <span class="badge bg-danger"><a href="{% url 'categories-delete' item.id %}"> حذف</a></span> -->
+                                                <a onclick="$('#frm_delete').submit()"
+                                                   class="btn btn-danger btn-action mr-1"
+                                                   data-toggle="tooltip" title="حذف"
+                                                   data-original-title="حذف"><i
+                                                        class="fas fa-pencil-alt"></i><i
+                                                        class="fa fa-trash"> </i> </a>
+
                                             </td>
                                         </tr>
                                     {% endfor %}

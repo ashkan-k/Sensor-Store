@@ -35,7 +35,7 @@
                                 <br/>
                                 <biv>
                                     <a href="{% url 'settings-create' %}" class="btn btn-success"
-                                    >ساخت محصول جدید</a
+                                    >ساخت تنظیمات جدید</a
                                     >
                                 </biv>
                                 <div class="card-tools">
@@ -73,22 +73,27 @@
                                             <td title="{{ item.value }}">{{ item.value | truncatechars:80 | default:'---' }}</td>
 
                                             <td>
-                                                  <span type="submit" class="btn btn-info m-1"
-                                                  ><a
-                                                          style="color: white"
-                                                          href="{% url 'settings-update' item.id %}"
-                                                  >
-                                                      ویرایش</a
-                                                  ></span
-                                                  >
-                                                <form
-                                                        method="post"
-                                                        action="{% url 'settings-delete' item.id %}"
-                                                >
+
+                                                <form id="frm_delete"
+                                                      method="post"
+                                                      action="{% url 'settings-delete' item.id %}">
                                                     {% csrf_token %}
-                                                    <input type="submit" value="حذف" class="btn btn-danger m-1">
                                                 </form>
-                                                <!-- <span class="badge bg-danger"><a href="{% url 'categories-delete' item.id %}"> حذف</a></span> -->
+
+                                                <a href="{% url 'settings-update' item.id %}"
+                                                   class="btn btn-primary btn-action mr-1"
+                                                   data-toggle="tooltip" title="ویرایش"
+                                                   data-original-title="ویرایش"><i
+                                                        class="fas fa-pencil-alt"></i><i
+                                                        class="fa fa-pencil"> </i> </a>
+
+                                                <a onclick="$('#frm_delete').submit()"
+                                                   class="btn btn-danger btn-action mr-1"
+                                                   data-toggle="tooltip" title="حذف"
+                                                   data-original-title="حذف"><i
+                                                        class="fas fa-pencil-alt"></i><i
+                                                        class="fa fa-trash"> </i> </a>
+
                                             </td>
                                         </tr>
                                     {% endfor %}
