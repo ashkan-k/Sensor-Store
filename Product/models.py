@@ -67,7 +67,7 @@ class NotifyUser(CustomModel):
         verbose_name_plural = 'اطلاع رسانی ها'
 
     def __str__(self):
-        return self.user.fullname() + '-' + self.product.title
+        return self.user.full_name + '-' + self.product.title
 
 
 class Color(CustomModel):

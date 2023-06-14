@@ -13,14 +13,13 @@ from Cart.models import Cart
 
 class CartListView(SuperUserRequiredMixin, ListView):
     model = Cart
-    context_object_name = 'suggestions'
     paginate_by = settings.PAGINATION_NUMBER
     ordering = ['-created_at']
     template_name = 'carts/admin/carts/list.html'
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return CartFilters(data=self.request.GET, queryset=queryset).qs
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     return CartFilters(data=self.request.GET, queryset=queryset).qs
 
 
 class CartDeleteView(SuperUserRequiredMixin, DeleteView):

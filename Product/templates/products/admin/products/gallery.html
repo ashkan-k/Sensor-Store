@@ -78,7 +78,7 @@
 
                                             <td>
 
-                                                <form id="frm_delete"
+                                                <form id="frm_delete_{{ item.id }}"
                                                       method="post"
                                                       action="{% url 'galleries-delete' item.id %}">
                                                     {% csrf_token %}
@@ -89,7 +89,7 @@
 
                                                 </form>
 
-                                                <a onclick="$('#frm_delete').submit()"
+                                                <a onclick="$('#frm_delete_{{ item.id }}').submit()"
                                                    class="btn btn-danger btn-action mr-1"
                                                    data-toggle="tooltip" title="حذف"
                                                    data-original-title="حذف"><i

@@ -8,9 +8,9 @@ dashboard_urls = [
     path('dashboard/carts/delete/<int:pk>/', CartDeleteView.as_view(), name='carts-delete'),
 ]
 
-front_urls = [
-    path('carts/add/', CartView.as_view(), name='carts-add'),
-]
+# front_urls = [
+#     path('carts/add/', CartView.as_view(), name='carts-add'),
+# ]
 
 urlpatterns += dashboard_urls
-urlpatterns += front_urls
+# urlpatterns += front_urls
