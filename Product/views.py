@@ -145,6 +145,8 @@ class GalleryCreateView(SuperUserRequiredMixin, FormView):
         images = self.request.FILES.getlist('image')
         for item in images:
             product.images.create(image=item)
+
+        messages.success(self.request, 'تصاویر مورد نظر با موفقیت آپلود شدند.')
         return super().form_valid(form)
 
     def get_success_url(self):

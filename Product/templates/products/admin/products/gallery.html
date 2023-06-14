@@ -1,4 +1,6 @@
-{% extends "Layouts/admin-master.html" %} {% block Content %}
+{% extends "Layouts/admin-master.html" %}
+{% load public_tags %}
+{% block Content %}
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -72,7 +74,7 @@
                                             <td>
                                                 <img src="{{ item.image.url }}" alt="{{ item.product }}" width="80">
                                             </td>
-                                            <td>{{ item.created_at |  default:'---' }}</td>
+                                            <td>{{ item.created_at | jdate |  default:'---' }}</td>
 
                                             <td>
 
@@ -159,4 +161,15 @@
         <!-- /.content -->
     </div>
 
+{% endblock %}
+
+
+{% block Scripts %}
+    <script>
+        {% if messages %}
+            {% for item in messages %}
+                showToast('{{ item }}', 'success');
+            {% endfor %}
+        {% endif %}
+    </script>
 {% endblock %}

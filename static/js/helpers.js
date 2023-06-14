@@ -52,6 +52,30 @@ function createSwal(type, text, title, showCancel = true, confirmText = 'بله�
     })
 }
 
+function showToast(error, type) {
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-bottom-left",
+        "preventDuplicates": false,
+        "showDuration": "2000",
+        "hideDuration": "500",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+    if (type === 'success') {
+        toastr.success(error)
+    } else {
+        toastr.error(error)
+    }
+}
+
 // AngularJS Configuration
 // var app = angular.module("myApp", []);
 // app.config(function ($interpolateProvider, $httpProvider) {
