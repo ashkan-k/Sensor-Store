@@ -1,15 +1,120 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "Layouts/admin-master.html" %}
+{% load public_tags %}
+{% block Content %}
 
-    {% for item in object_list %}
-        <h1>{{ item.name }}</h1>
-        <hr>
-    {% endfor %}
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark">کد تخفیف</h1>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-left">
+                            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">خانه</a></li>
+                            <li class="breadcrumb-item active">کد تخفیف</li>
+                        </ol>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
 
-</body>
-</html>
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">جدول کد تخفیف</h3>
+                                <br/>
+                                <biv>
+                                    <a href="{% url 'coupons-create' %}" class="btn btn-success"
+                                    >ساخت کد تخفیف جدید</a
+                                    >
+                                </biv>
+                                <div class="card-tools">
+                                    <div class="input-group input-group-sm" style="width: 150px">
+                                        <input
+                                                type="text"
+                                                name="table_search"
+                                                class="form-control float-right"
+                                                placeholder="جستجو"
+                                        />
+
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-default">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover">
+                                    <tbody>
+                                    <tr>
+                                        <th>شناسه</th>
+                                        <th>کد</th>
+                                        <th>درصد</th>
+                                        <th>تعداد قابل استفاده</th>
+                                        <th>تاریخ انقضا</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                    {% for item in object_list %}
+                                        <tr>
+                                            <td>{{ item.id |  default:'---' }}</td>
+                                            <td>{{ item.code | default:'---' }}</td>
+                                            <td>{{ item.percent | default:'---' }}</td>
+                                            <td>{{ item.uses_number | default:'---' }}</td>
+                                            <td>{{ item.expiration | jdate | default:'---' }}</td>
+
+                                            <td>
+
+                                                <form id="frm_delete_{{ item.id }}"
+                                                      method="post"
+                                                      action="{% url 'coupons-delete' item.id %}">
+                                                    {% csrf_token %}
+                                                </form>
+
+                                                <a href="{% url 'coupons-update' item.id %}"
+                                                   class="btn btn-primary btn-action mr-1"
+                                                   data-toggle="tooltip" title="ویرایش"
+                                                   data-original-title="ویرایش"><i
+                                                        class="fas fa-pencil-alt"></i><i
+                                                        class="fa fa-pencil"> </i> </a>
+
+                                                <a onclick="$('#frm_delete_{{ item.id }}').submit()"
+                                                   class="btn btn-danger btn-action mr-1"
+                                                   data-toggle="tooltip" title="حذف"
+                                                   data-original-title="حذف"><i
+                                                        class="fas fa-pencil-alt"></i><i
+                                                        class="fa fa-trash"> </i> </a>
+
+                                            </td>
+
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+
+{% endblock %}
