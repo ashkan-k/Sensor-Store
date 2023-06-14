@@ -28,7 +28,7 @@ class RegisterView(AnonymousUserMixin, CreateView):
         return kwargs
 
 
-class LoginView(CheckTeacherStatusMixin, LoginViewAuto):
+class LoginView(LoginViewAuto):
     template_name = 'auth/login.html'
     redirect_authenticated_user = True
     next_page = reverse_lazy('dashboard')
