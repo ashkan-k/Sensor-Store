@@ -34,9 +34,8 @@
                                 <h3 class="card-title">جدول گالری تصاویر محصولات</h3>
                                 <br/>
                                 <biv>
-                                    <a href="{% url 'products-create' %}" class="btn btn-success"
-                                    >ساخت محصول جدید</a
-                                    >
+                                    <a onclick="$('#exampleModalCenter').modal('show');" class="btn btn-success">ساخت
+                                        محصول جدید</a>
                                 </biv>
                                 <div class="card-tools">
                                     <div class="input-group input-group-sm" style="width: 150px">
@@ -62,43 +61,31 @@
                                     <tr>
                                         <th>شناسه</th>
                                         <th>نام محصول</th>
-                                        <th>نامک</th>
-                                        <th>قیمت</th>
-                                        <th>فروشنده</th>
-                                        <th>دسته بندی</th>
-                                        <th>وضعیت</th>
+                                        <th>عکس</th>
                                         <th>تاریخ و زمان ثبت</th>
                                         <th>عملیات</th>
                                     </tr>
                                     {% for item in object_list %}
                                         <tr>
                                             <td>{{ item.id |  default:'---' }}</td>
-                                            <td>{{ item.title |  default:'---' }}</td>
-                                            <td>{{ item.slug |  default:'---' }}</td>
-                                            <td>{{ item.price |  default:'---' }}</td>
-                                            <td>{{ item.user |  default:'---' }}</td>
-                                            <td>{{ item.category |  default:'---' }}</td>
-                                            {% if item.status == True %}
-                                                <td class="badge badge-success mt-3">بررسی شده</td>
-                                            {% else %}
-                                                <td class="badge badge-warning mt-3">بررسی نشده</td>
-                                            {% endif %}
+                                            <td>{{ item.product |  default:'---' }}</td>
+                                            <td>
+                                                <img src="{{ item.image.url }}" alt="{{ item.product }}" width="80">
+                                            </td>
                                             <td>{{ item.created_at |  default:'---' }}</td>
 
                                             <td>
 
                                                 <form id="frm_delete"
                                                       method="post"
-                                                      action="{% url 'products-delete' item.id %}">
+                                                      action="{% url 'galleries-delete' item.id %}">
                                                     {% csrf_token %}
-                                                </form>
 
-                                                <a href="{% url 'products-update' item.id %}"
-                                                   class="btn btn-primary btn-action mr-1"
-                                                   data-toggle="tooltip" title="ویرایش"
-                                                   data-original-title="ویرایش"><i
-                                                        class="fas fa-pencil-alt"></i><i
-                                                        class="fa fa-pencil"> </i> </a>
+                                                    <input type="hidden" name="product_id"
+                                                           value="{{ request.resolver_match.kwargs.pk }}">
+
+
+                                                </form>
 
                                                 <a onclick="$('#frm_delete').submit()"
                                                    class="btn btn-danger btn-action mr-1"
@@ -120,14 +107,17 @@
                             <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
                                  aria-labelledby="exampleModalCenterTitle"
                                  aria-hidden="true">
-                                <form id="form" enctype="multipart/form-data">
-                                    <div class="modal-dialog modal-dialog-centered"
-                                         style="max-width: 70%; margin: 0 auto!important;" role="document">
+                                <form id="form" enctype="multipart/form-data" method="post">
+                                    {% csrf_token %}
+
+                                    <div class="modal-dialog modal-dialog-centered mt-5"
+                                         style="max-width: 50%; margin-top: 10% !important;" role="document">
 
                                         <div class="modal-content">
 
                                             <div class="modal-header" style="width: 100%!important;">
-                                                <h5 class="modal-title" id="exampleModalCenterTitle">آپلود گالری تصاویر</h5>
+                                                <h5 class="modal-title" id="exampleModalCenterTitle">آپلود گالری
+                                                    تصاویر</h5>
                                                 <button type="button" class="close"
                                                         style="position: absolute!important;left: 0!important;"
                                                         data-dismiss="modal"
@@ -136,13 +126,18 @@
                                                 </button>
                                             </div>
 
+                                            <input type="hidden" name="product"
+                                                   value="{{ request.resolver_match.kwargs.pk }}">
+
                                             <div class="modal-body">
                                                 <label class="form-label" for="value">تصاویر:</label>
-                                                <input type="file" class="form-control" id="id_images" name="images" multiple>
+                                                <input type="file" required class="form-control" id="id_images"
+                                                       name="image" accept=".gif,.jpg,.jpeg,.png" multiple>
                                             </div>
 
                                             <div class="modal-footer">
-                                                <button type="button" onclick="$('#exampleModalCenter').modal('toggle');"
+                                                <button type="button"
+                                                        onclick="$('#exampleModalCenter').modal('toggle');"
                                                         class="btn btn-danger" data-dismiss="modal">لغو
                                                 </button>
                                                 &nbsp; &nbsp;

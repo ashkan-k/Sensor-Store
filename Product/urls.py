@@ -18,6 +18,9 @@ urlpatterns = [
     path('dashboard/sizes/update/<int:pk>/', SizeUpdateView.as_view(), name='sizes-update'),
     path('dashboard/sizes/delete/<int:pk>/', SizeDeleteView.as_view(), name='sizes-delete'),
 
+    path('dashboard/products/galleries/upload/<int:pk>/', GalleryCreateView.as_view(), name='galleries-create'),
+    path('dashboard/products/galleries/delete/<int:pk>/', GalleryDeleteView.as_view(), name='galleries-delete'),
+
     path("dashboard/products/import/", ProductImportView.as_view(), name='products-import'),
 
 ]

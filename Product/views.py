@@ -1,14 +1,14 @@
 # from Subscription.models import Type
 from django.conf import settings
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, FormView
 
 from ACL.mixins import SuperUserRequiredMixin
 from .excel import Reader
-from .forms import ProductForm, ExcelImportForm, ColorForm, SizeForm
-from .models import Product, Color, Size
+from .forms import ProductForm, ExcelImportForm, ColorForm, SizeForm, GalleryForm
+from .models import Product, Color, Size, Gallery
 
 """ Products """
 
@@ -120,6 +120,43 @@ class SizeDeleteView(SuperUserRequiredMixin, DeleteView):
     model = Size
     template_name = 'products/admin/sizes/list.html'
     success_url = reverse_lazy("sizes-list")
+
+    def dispatch(self, *args, **kwargs):
+        resp = super().dispatch(*args, **kwargs)
+        messages.success(self.request, 'آیتم مورد نظر با موفقیت حدف شد.')
+        return resp
+
+
+""" Gallery """
+
+
+class GalleryCreateView(SuperUserRequiredMixin, FormView):
+    template_name = "products/admin/products/gallery.html"
+    model = Gallery
+    form_class = GalleryForm
+
+    def get_context_data(self, **kwargs):
+        product = get_object_or_404(Product, pk=self.kwargs.get('pk'))
+        kwargs['object_list'] = product.images.all()
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        product = form.cleaned_data.get('product')
+        images = self.request.FILES.getlist('image')
+        for item in images:
+            product.images.create(image=item)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("galleries-create", args=[self.request.POST.get('product')])
+
+
+class GalleryDeleteView(SuperUserRequiredMixin, DeleteView):
+    model = Gallery
+    template_name = "products/admin/products/gallery.html"
+
+    def get_success_url(self):
+        return reverse_lazy("galleries-create", args=[self.request.POST.get('product_id')])
 
     def dispatch(self, *args, **kwargs):
         resp = super().dispatch(*args, **kwargs)

@@ -93,6 +93,13 @@
                                                     {% csrf_token %}
                                                 </form>
 
+                                                <a href="{% url 'galleries-create' item.id %}"
+                                                   class="btn btn-warning btn-action mr-1"
+                                                   data-toggle="tooltip" title="گالری تصاویر"
+                                                   data-original-title="گالری تصاویر"><i
+                                                        class="fas fa-image-alt"></i><i
+                                                        class="fa fa-image"> </i> </a>
+
                                                 <a href="{% url 'products-update' item.id %}"
                                                    class="btn btn-primary btn-action mr-1"
                                                    data-toggle="tooltip" title="ویرایش"

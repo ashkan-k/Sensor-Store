@@ -1,6 +1,7 @@
 from django import forms
+from django.forms import ClearableFileInput
 
-from Product.models import Product, Color, Size
+from Product.models import Product, Color, Size, Gallery
 
 
 class ProductForm(forms.ModelForm):
@@ -41,3 +42,12 @@ class SizeForm(forms.ModelForm):
     class Meta:
         model = Size
         fields = '__all__'
+
+
+class GalleryForm(forms.ModelForm):
+    class Meta:
+        model = Gallery
+        fields = '__all__'
+        widgets = {
+            "resumes": ClearableFileInput(attrs={"multiple": True}),
+        }
