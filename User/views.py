@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 import pandas as pd
 # from Subscription.models import Type
-from ACL.mixins import SuperUserRequiredMixin, VerifiedUserMixin, PermissionMixin
+from ACL.mixins import SuperUserRequiredMixin, VerifiedUserMixin
 from .filters import UserFilters
 from .forms import *
 from django.views.generic import ListView, DeleteView, UpdateView, CreateView
@@ -16,7 +16,7 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 
-class UsersListView(PermissionMixin, ListView):
+class UsersListView(SuperUserRequiredMixin, ListView):
     permissions = ['user_list']
     model = User
     context_object_name = 'users'
@@ -42,16 +42,14 @@ class UsersCreateView(SuperUserRequiredMixin, CreateView):
     success_url = reverse_lazy("users-list")
 
 
-class UsersUpdateView(PermissionMixin, UpdateView):
-    permissions = ['user_edit']
+class UsersUpdateView(SuperUserRequiredMixin, UpdateView):
     template_name = "users/admin/users/form.html"
     model = User
     form_class = UserForm
     success_url = reverse_lazy("users-list")
 
 
-class UsersDeleteView(PermissionMixin, DeleteView):
-    permissions = ['user_delete']
+class UsersDeleteView(SuperUserRequiredMixin, DeleteView):
     model = User
     template_name = 'users/admin/users/list.html'
     success_url = reverse_lazy("users-list")
@@ -64,7 +62,7 @@ class UsersDeleteView(PermissionMixin, DeleteView):
 
 ##############################################################################
 
-class UserChangePasswordView(PermissionMixin, View):
+class UserChangePasswordView(SuperUserRequiredMixin, View):
     permissions = ['user_change_password']
     form = SetPasswordForm
     template_name = 'users/admin/users/change_password.html'
