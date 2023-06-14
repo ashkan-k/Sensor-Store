@@ -29,8 +29,8 @@ class Article(CustomModel):
 
     author = models.ForeignKey(verbose_name='نویسنده', related_name='author_id', to=get_user_model(),
                                on_delete=models.CASCADE)
-    category = models.ForeignKey(verbose_name='دسته بندی', related_name='category_id', to=Category,
-                                 on_delete=models.CASCADE)
+    # category = models.ForeignKey(verbose_name='دسته بندی', related_name='category_id', to=Category,
+    #                              on_delete=models.CASCADE)
 
     comments = GenericRelation(Comment, related_query_name='articles')
     likes_and_dislikes = GenericRelation(Like_And_DisLike, related_query_name='articles')
@@ -49,6 +49,10 @@ class Article(CustomModel):
     @property
     def get_status_class(self):
         return dict(ArticleStatusStatusArticle.CHOICES).get(self.status, '')
+
+    @property
+    def get_image(self):
+        return self.image.url if self.image else '---'
 
     def save(self, *args, **kwargs):
         if not self.slug:

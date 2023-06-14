@@ -161,6 +161,30 @@
                         </ul>
                     </li>
 
+                             <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fa fa-paper-plane"></i>
+                            <p>
+                                مقالات
+                                <i class="right fa fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'articles-create' %}" class="nav-link">
+                                    <i class="fa fa-circle-o nav-icon"></i>
+                                    <p>ساخت مقاله جدید</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'articles-list' %}" class="nav-link">
+                                    <i class="fa fa-circle-o nav-icon"></i>
+                                    <p>لیست مقاله ها</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fa fa-money"></i>
